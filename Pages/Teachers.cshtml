@@ -1,0 +1,435 @@
+@page "/giao-vien"
+@{
+    ViewData["Title"] = "Đội ngũ giáo viên";
+}
+
+<style>
+    .page-hero {
+        background-color: var(--bg-gray);
+        padding: 40px 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .teachers-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        padding: 40px 0;
+    }
+    
+    .teachers-left {
+        width: 100%;
+    }
+    
+    .teachers-right {
+        width: 100%;
+    }
+    
+    @@media (min-width: 992px) {
+        .teachers-left {
+            width: 30%;
+            position: sticky;
+            top: 100px; /* Account for fixed header */
+            height: fit-content;
+        }
+        .teachers-right {
+            width: calc(70% - 32px);
+        }
+    }
+    
+    /* Active Teacher Card (Left) */
+    .active-teacher-card {
+        background: white;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+    }
+    
+    .active-teacher-img-box {
+        position: relative;
+        background-color: var(--bg-gray);
+        aspect-ratio: 4/5;
+        overflow: hidden;
+    }
+    
+    .active-teacher-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+    .active-teacher-score {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: white;
+        color: var(--primary-color);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-weight: 800;
+        box-shadow: var(--shadow-sm);
+        font-size: 14px;
+    }
+    
+    .active-teacher-info {
+        padding: 24px;
+    }
+    
+    /* Tabs (Right) */
+    .filter-tabs {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: none; /* Firefox */
+    }
+    
+    .filter-tabs::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+    
+    .filter-tab {
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-body);
+        background: var(--bg-gray);
+        border: 1px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-tab:hover {
+        background: white;
+        border-color: var(--border-color);
+    }
+    
+    .filter-tab.active {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    /* Grid List */
+    .teachers-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    @@media (min-width: 768px) {
+        .teachers-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @@media (min-width: 1200px) {
+        .teachers-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    .grid-teacher-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 24px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .grid-teacher-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-4px);
+    }
+    
+    .grid-teacher-card.active {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 1px var(--primary-color);
+    }
+    
+    .grid-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 2px solid var(--bg-gray);
+    }
+    
+    /* Pagination */
+    .pagination-custom {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 40px;
+    }
+    
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: white;
+        color: var(--text-heading);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .page-btn:hover {
+        background: var(--bg-gray);
+    }
+    
+    .page-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+</style>
+
+<div class="page-hero fade-in">
+    <div class="container">
+        <h1 class="section-title mb-0">Đội ngũ giáo viên</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="teachers-layout fade-in">
+        
+        <!-- CỘT TRÁI: ACTIVE TEACHER -->
+        <div class="teachers-left" id="activeTeacherContainer">
+            <!-- Nôi dung sẽ được render bằng JS -->
+        </div>
+        
+        <!-- CỘT PHẢI: TABS & GRID -->
+        <div class="teachers-right">
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <div class="filter-tab active">Tất cả</div>
+                <div class="filter-tab">IELTS</div>
+                <div class="filter-tab">SAT</div>
+                <div class="filter-tab">THCS</div>
+                <div class="filter-tab">KIDS</div>
+            </div>
+            
+            <!-- Grid -->
+            <div class="teachers-grid" id="teachersGrid">
+                <!-- Nội dung sẽ được render bằng JS -->
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-custom">
+                <button class="page-btn"><i class="bi bi-chevron-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">10</button>
+                <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof dolTeachers === 'undefined' || !dolTeachers.length) return;
+            
+            const gridContainer = document.getElementById('teachersGrid');
+            const activeContainer = document.getElementById('activeTeacherContainer');
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const paginationContainer = document.querySelector('.pagination-custom');
+            
+            let currentFilteredTeachers = dolTeachers;
+            let currentPage = 1;
+            const itemsPerPage = 12;
+
+            // Hàm render card chi tiết (Bên trái)
+            function renderActiveTeacher(teacher) {
+                if (!teacher) {
+                    activeContainer.innerHTML = '<p class="text-center mt-5 text-muted">Không tìm thấy giáo viên.</p>';
+                    return;
+                }
+
+                let skillsHtml = generateBulletPoints(teacher.ielts_skills);
+                let eduHtml = generateBulletPoints(teacher.education);
+                let achHtml = generateBulletPoints(teacher.achievements);
+                
+                activeContainer.innerHTML = `
+                    <div class="active-teacher-card fade-in visible">
+                        <div class="active-teacher-img-box" style="background-color: ${teacher.bgColor}; height: 400px; display: flex; justify-content: center; align-items: flex-end; padding-top: 20px;">
+                            <img src="${teacher.avatar}" alt="${teacher.name}" class="active-teacher-img" style="width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 8px 8px 0 0;">
+                            <div class="active-teacher-score">${teacher.ielts_overall} IELTS Overall</div>
+                        </div>
+                        <div class="active-teacher-info">
+                            <h2 class="fw-800 text-heading mb-1">${teacher.name}</h2>
+                            <p class="text-muted fw-600 mb-4">${teacher.title}</p>
+                            
+                            ${skillsHtml ? `<ul class="list-unstyled mb-3">${skillsHtml}</ul>` : ''}
+                            ${eduHtml ? `<ul class="list-unstyled mb-3">${eduHtml}</ul>` : ''}
+                            ${achHtml ? `<ul class="list-unstyled mb-4">${achHtml}</ul>` : ''}
+                            
+                            <a href="/lien-he" class="btn-dol w-100" style="background: white; color: var(--text-heading) !important; border: 1px solid var(--border-color); font-weight: 600; text-align: center; display: block;">Xem thông tin giáo viên</a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Hàm render danh sách lưới (Bên phải) theo trang
+            function renderGrid(teachersArray) {
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const pageTeachers = teachersArray.slice(startIndex, endIndex);
+
+                let html = '';
+                pageTeachers.forEach((t, index) => {
+                    const isActive = index === 0 ? 'active' : '';
+                    html += `
+                        <div class="grid-teacher-card ${isActive}" data-id="${t.id}">
+                            <img src="${t.avatar}" alt="${t.name}" class="grid-avatar">
+                            <h5 class="fw-700 text-heading mb-1" style="font-size: 16px;">${t.name}</h5>
+                            <div class="text-muted" style="font-size: 13px;">IELTS ${t.ielts_overall}</div>
+                        </div>
+                    `;
+                });
+                gridContainer.innerHTML = html;
+                
+                // Thêm click event cho các card
+                const cards = document.querySelectorAll('.grid-teacher-card');
+                cards.forEach(card => {
+                    card.addEventListener('click', function() {
+                        cards.forEach(c => c.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const id = parseInt(this.getAttribute('data-id'));
+                        const teacher = teachersArray.find(t => t.id === id);
+                        if(teacher) {
+                            renderActiveTeacher(teacher);
+                            if (window.innerWidth < 992) {
+                                activeContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Hàm render nút phân trang
+            function renderPagination(totalItems) {
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                if (totalPages <= 1) {
+                    paginationContainer.innerHTML = '';
+                    return;
+                }
+
+                let html = '';
+                // Nút Previous
+                html += `<button class="page-btn prev-btn" ${currentPage === 1 ? 'disabled' : ''}><i class="bi bi-chevron-left"></i></button>`;
+
+                // Tính toán page hiển thị linh động (tối đa 5 nút)
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
+
+                if (startPage > 1) {
+                    html += `<button class="page-btn page-num" data-page="1">1</button>`;
+                    if (startPage > 2) html += `<button class="page-btn" disabled>...</button>`;
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const activeClass = i === currentPage ? 'active' : '';
+                    html += `<button class="page-btn page-num ${activeClass}" data-page="${i}">${i}</button>`;
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) html += `<button class="page-btn" disabled>...</button>`;
+                    html += `<button class="page-btn page-num" data-page="${totalPages}">${totalPages}</button>`;
+                }
+
+                // Nút Next
+                html += `<button class="page-btn next-btn" ${currentPage === totalPages ? 'disabled' : ''}><i class="bi bi-chevron-right"></i></button>`;
+
+                paginationContainer.innerHTML = html;
+
+                // Add events for pagination buttons
+                const pageNums = paginationContainer.querySelectorAll('.page-num');
+                pageNums.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        currentPage = parseInt(this.getAttribute('data-page'));
+                        updateView();
+                    });
+                });
+
+                const prevBtn = paginationContainer.querySelector('.prev-btn');
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function() {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            updateView();
+                        }
+                    });
+                }
+
+                const nextBtn = paginationContainer.querySelector('.next-btn');
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function() {
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            updateView();
+                        }
+                    });
+                }
+            }
+
+            function updateView() {
+                renderGrid(currentFilteredTeachers);
+                renderPagination(currentFilteredTeachers.length);
+                
+                // Active user đầu tiên của trang hiện tại (nếu có)
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                if (currentFilteredTeachers[startIndex]) {
+                    renderActiveTeacher(currentFilteredTeachers[startIndex]);
+                } else {
+                    renderActiveTeacher(null);
+                }
+            }
+
+            // THÊM LOGIC LỌC (FILTER TABS)
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const selectedCategory = this.textContent.trim();
+                    
+                    if (selectedCategory !== "Tất cả") {
+                        currentFilteredTeachers = dolTeachers.filter(t => 
+                            t.category && t.category.includes(selectedCategory)
+                        );
+                    } else {
+                        currentFilteredTeachers = dolTeachers;
+                    }
+                    
+                    // Reset về trang 1 khi lọc
+                    currentPage = 1;
+                    updateView();
+                });
+            });
+            
+            // Khởi tạo ban đầu
+            updateView();
+        });
+    </script>
+}

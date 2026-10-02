@@ -1,0 +1,2233 @@
+@page "/tra-cuu-diem"
+@model IELTSHub.Pages.ScoreLookupModel
+@{
+    ViewData["Title"] = "Tra cứu điểm thi";
+}
+
+<style>
+    .compact-search-form {
+        display: flex;
+        align-items: center;
+        width: 280px;
+        background: white;
+        border-radius: 50px;
+        border: 1px solid #e5e7eb;
+        padding: 4px;
+    }
+    
+    .compact-search-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 6px 16px;
+        font-size: 0.95rem;
+        color: var(--text-heading);
+        outline: none;
+    }
+    
+    .compact-search-input::placeholder {
+        color: #999;
+    }
+    
+    .compact-search-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    
+    .compact-search-btn:hover {
+        background: #b51c1c;
+    }
+    
+    .hof-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    @@media (max-width: 768px) {
+        .hof-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .hof-actions {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            gap: 12px;
+        }
+        .compact-search-form {
+            width: 100%;
+        }
+        .hof-tabs {
+            width: 100%;
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+    }
+    
+    /* Result Card */
+    .result-card {
+        border-radius: var(--border-radius-lg);
+        padding: 48px;
+        background: white;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+    
+    .result-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 24px;
+        margin-bottom: 32px;
+    }
+    
+    .result-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        letter-spacing: 2px;
+    }
+    
+    .candidate-name {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 24px;
+    }
+    
+    .meta-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    
+    .meta-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-heading);
+        margin-bottom: 20px;
+    }
+    
+    .score-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    
+    .score-label {
+        width: 120px;
+        font-weight: 700;
+        color: var(--text-heading);
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+    
+    .score-value {
+        width: 50px;
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: var(--primary-color);
+        text-align: right;
+    }
+    
+    .score-bar-container {
+        flex-grow: 1;
+        height: 8px;
+        background: var(--bg-gray);
+        border-radius: 4px;
+        margin: 0 20px;
+        overflow: hidden;
+    }
+    
+    .score-bar {
+        height: 100%;
+        background: var(--primary-color);
+        border-radius: 4px;
+        transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    
+    .overall-box {
+        background: var(--bg-gray);
+        border-radius: var(--border-radius);
+        padding: 32px;
+        text-align: center;
+        border: 1px dashed var(--border-color);
+    }
+    
+    .overall-score {
+        font-size: 4rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        line-height: 1;
+        margin: 16px 0;
+    }
+    
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        background: #E8F5E9;
+        color: #2E7D32;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+    
+    /* Print Styles */
+    @@media print {
+        header, footer, .lookup-hero, .lookup-form-card, .btn-print, .alert {
+            display: none !important;
+        }
+        main {
+            padding-top: 0 !important;
+        }
+        .result-card {
+            box-shadow: none;
+            margin: 0;
+            padding: 20mm;
+            border: 2px solid #000;
+        }
+        body {
+            background: white;
+        }
+        .score-bar {
+            background: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+    /* Hall of Fame */
+    .hall-of-fame-section {
+        padding: 40px 0;
+        background-color: var(--bg-gray);
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .hof-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .hof-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin: 0;
+    }
+    
+    .hof-tabs {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    
+    .hof-tabs span {
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    
+    .hof-tab-btn {
+        padding: 6px 16px;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--text-heading);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .hof-tab-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .hof-tab-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .hof-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+    
+    @@media (max-width: 991px) {
+        .hof-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @@media (max-width: 575px) {
+        .hof-grid { grid-template-columns: 1fr; }
+    }
+    
+    .hof-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+    
+    .hof-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .hof-img-container {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+    
+    .hof-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .ribbon {
+        position: absolute;
+        top: -1px;
+        right: 15px;
+        background: var(--primary-color);
+        color: white;
+        width: 64px;
+        text-align: center;
+        padding: 10px 5px 20px 5px;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 15px), 0 100%);
+        z-index: 2;
+    }
+    
+    .ribbon-score {
+        font-size: 20px;
+        font-weight: 900;
+        display: block;
+        line-height: 1;
+        margin-bottom: 2px;
+    }
+    
+    .ribbon-text {
+        font-size: 11px;
+        font-weight: 700;
+        display: block;
+        text-transform: uppercase;
+    }
+    
+    .hof-info {
+        padding: 20px;
+        text-align: center;
+        background: white;
+    }
+    
+    .hof-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 6px;
+    }
+    
+    .hof-uni {
+        font-size: 12px;
+        color: #888;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin: 0;
+    }
+
+    /* IELTS Scorecard */
+    .ielts-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+    }
+    .ielts-header {
+        background-color: #31313e;
+        color: white;
+        padding: 16px 24px;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+    .ielts-info-row {
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--border-color);
+        background: white;
+    }
+    .ielts-info-col {
+        flex: 1;
+        min-width: 150px;
+        padding: 20px 24px;
+        border-right: 1px solid var(--border-color);
+    }
+    .ielts-info-col:last-child {
+        border-right: none;
+    }
+    .info-icon {
+        color: #888;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    .info-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+    .info-value {
+        font-weight: 700;
+        color: var(--text-heading);
+        font-size: 1rem;
+    }
+    .ielts-body {
+        padding: 32px 24px;
+        background: #fdfdfd;
+    }
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .section-title-left {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-heading);
+        border-left: 4px solid var(--primary-color);
+        padding-left: 12px;
+    }
+    .download-link {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .download-link:hover {
+        text-decoration: underline;
+    }
+    .score-overall-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .overall-text {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-heading);
+    }
+    .overall-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .score-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    @@media (max-width: 991px) {
+        .score-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 575px) {
+        .score-grid { grid-template-columns: 1fr; }
+    }
+    .skill-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .skill-name {
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .skill-score {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    /* Attendance Timeline */
+    .timeline-section {
+        margin-top: 40px;
+    }
+    .timeline-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 24px;
+        color: var(--text-heading);
+    }
+    .timeline-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .timeline-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: transform 0.2s;
+    }
+    .timeline-card:hover {
+        transform: translateX(5px);
+    }
+    .timeline-card.highlight {
+        border-color: #f97316;
+        box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
+        background: linear-gradient(to right, #fffaf5, white);
+    }
+    .course-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .course-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--bg-gray);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
+    .course-details h4 {
+        margin: 0 0 4px 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .course-details p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ecfdf5;
+        color: #10b981;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .highlight-badge {
+        background: #fef08a;
+        color: #854d0e;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .attendance-stats {
+        text-align: right;
+    }
+    .att-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+    }
+    .att-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-heading);
+    }
+    @@media (max-width: 768px) {
+        .timeline-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .attendance-stats {
+            text-align: left;
+            margin-left: 68px;
+        }
+    }
+    
+    .search-error {
+        color: #dc2626;
+        font-size: 0.9rem;
+        margin-top: 8px;
+        display: none;
+        font-weight: 500;
+    }
+
+    /* Accordion Styles */
+    .accordion-card {
+        cursor: pointer;
+        display: block;
+        padding: 0;
+    }
+    .accordion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px;
+    }
+    .accordion-right {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+    .accordion-icon {
+        font-size: 1.5rem;
+        color: var(--text-muted);
+        transition: transform 0.3s ease;
+    }
+    .accordion-card.active .accordion-icon {
+        transform: rotate(180deg);
+    }
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #f8fafc;
+        border-top: 1px solid transparent;
+    }
+    .accordion-card.active .accordion-content {
+        border-top-color: var(--border-color);
+    }
+    .accordion-content-inner {
+        padding: 24px;
+    }
+    .content-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-heading);
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border-color);
+    }
+    .final-score-box {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .final-overall {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 12px;
+    }
+    .final-skills {
+        display: flex;
+        gap: 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+    }
+    .teacher-note {
+        font-size: 0.9rem;
+        font-style: italic;
+        color: #4b5563;
+        background: #f3f4f6;
+        padding: 12px;
+        border-radius: 6px;
+    }
+    .attendance-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+    .attendance-list li {
+        padding: 10px 0;
+        border-bottom: 1px dashed var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.95rem;
+        color: var(--text-heading);
+    }
+    .attendance-list li:last-child {
+        border-bottom: none;
+    }
+    /* Customize scrollbar for attendance list */
+    .attendance-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    .attendance-list::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 4px;
+    }
+</style>
+<div class="container mt-5 pt-3">
+<div class="row justify-content-center">
+<div class="col-lg-12">
+<!-- Result Section (Hidden by default) -->
+<div id="searchResultsSection" style="display: none; padding-bottom: 120px;">
+<!-- Security Warning -->
+<div class="alert alert-warning alert-dismissible fade show mb-4 shadow-sm" role="alert" style="border-radius: 12px; border-left: 5px solid #f59e0b; background-color: #fffbeb;">
+<strong><i class="bi bi-shield-lock-fill me-2"></i>Lưu ý bảo mật:</strong> Vui lòng không chia sẻ Candidate ID của bạn cho người khác để bảo vệ thông tin cá nhân.
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button"></button>
+</div>
+<!-- Profile Information Card -->
+<div class="profile-card fade-in visible mb-5">
+<div class="profile-card-inner d-flex align-items-center flex-wrap" style="background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 32px; border: 1px solid var(--border-color);">
+<div class="profile-avatar text-center" style="flex-shrink: 0; margin-right: 32px;">
+<img alt="DANG HUU NHA" src="/images/students/nha_avatar.jpg" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #f1f5f9; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"/>
+</div>
+<div class="profile-details" style="flex-grow: 1; min-width: 300px;">
+<div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-3">
+<div>
+<h2 style="font-weight: 800; color: var(--text-heading); margin-bottom: 8px; font-size: 2rem;">DANG HUU NHA</h2>
+</div>
+<div class="text-md-end text-start">
+<p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px; font-weight: 700; text-transform: uppercase;">Candidate ID</p>
+<p style="color: var(--primary-color); font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: 1px;">521179</p>
+</div>
+</div>
+<hr style="border-color: #e2e8f0; margin: 20px 0;"/>
+<div class="row g-3">
+<div class="col-sm-4">
+<p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px; font-weight: 600;">Trung tâm</p>
+<p style="color: var(--text-heading); font-size: 1.05rem; font-weight: 700; margin: 0;"><i class="bi bi-geo-alt-fill text-danger me-1"></i> VN101 - Hồ Chí Minh</p>
+</div>
+<div class="col-sm-4">
+<p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px; font-weight: 600;">Lộ trình học</p>
+<p style="color: var(--text-heading); font-size: 1.05rem; font-weight: 700; margin: 0;"><i class="bi bi-map-fill text-primary me-1"></i> 4 Khóa học</p>
+</div>
+<div class="col-sm-4">
+<p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px; font-weight: 600;">Kỳ thi gần nhất</p>
+<p style="color: var(--text-heading); font-size: 1.05rem; font-weight: 700; margin: 0;"><i class="bi bi-calendar-check-fill text-success me-1"></i> 30/09/2026</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Attendance Timeline -->
+<div class="timeline-section fade-in visible">
+<h3 class="timeline-title">Lịch sử học tập &amp; Điểm danh tại DOL</h3>
+<div class="timeline-container" id="courseListSection">
+<!-- Khóa Pre -->
+<div class="timeline-card" onclick="showCourseDetail('detail-course-0')" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'" onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05)'" style="cursor: pointer; transition: all 0.2s;">
+<div class="accordion-header">
+<div class="course-info" style="flex: 1; min-width: 0; margin-right: 16px;">
+<div class="course-icon"><i class="bi bi-journal-check"></i></div>
+<div class="course-details">
+<h4>Khóa Pre IELTS <span class="status-badge"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span></h4>
+<p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Làm quen Tiếng Anh học thuật &amp; Phát âm chuẩn</p>
+</div>
+</div>
+<div class="accordion-right">
+<div class="attendance-stats">
+<div class="att-label">Điểm danh</div>
+<div class="att-value text-success">27/27 buổi</div>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem; font-weight: bold;"></i>
+</div>
+</div>
+</div>
+<!-- Khóa 4.0 -->
+<div class="timeline-card" onclick="showCourseDetail('detail-course-1')" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'" onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05)'" style="cursor: pointer; transition: all 0.2s;">
+<div class="accordion-header">
+<div class="course-info" style="flex: 1; min-width: 0; margin-right: 16px;">
+<div class="course-icon"><i class="bi bi-journal-text"></i></div>
+<div class="course-details">
+<h4>Khóa IELTS 4.0 <span class="status-badge"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span></h4>
+<p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Xây dựng nền tảng Đọc - Viết qua Linearthinking</p>
+</div>
+</div>
+<div class="accordion-right">
+<div class="attendance-stats">
+<div class="att-label">Điểm danh</div>
+<div class="att-value text-success">27/27 buổi</div>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem; font-weight: bold;"></i>
+</div>
+</div>
+</div>
+<!-- Khóa 5.0 -->
+<div class="timeline-card" onclick="showCourseDetail('detail-course-2')" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'" onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05)'" style="cursor: pointer; transition: all 0.2s;">
+<div class="accordion-header">
+<div class="course-info" style="flex: 1; min-width: 0; margin-right: 16px;">
+<div class="course-icon"><i class="bi bi-journal-richtext"></i></div>
+<div class="course-details">
+<h4>Khóa IELTS 5.0 <span class="status-badge"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span></h4>
+<p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Phát triển tư duy Tiếng Anh logic toàn diện</p>
+</div>
+</div>
+<div class="accordion-right">
+<div class="attendance-stats">
+<div class="att-label">Điểm danh</div>
+<div class="att-value text-success">27/27 buổi</div>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem; font-weight: bold;"></i>
+</div>
+</div>
+</div>
+<!-- Khóa 6.0 Intensive -->
+<div class="timeline-card highlight" onclick="showCourseDetail('detail-course-3')" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'" onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.05)'" style="cursor: pointer; transition: all 0.2s;">
+<div class="accordion-header">
+<div class="course-info" style="flex: 1; min-width: 0; margin-right: 16px;">
+<div class="course-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+<div class="course-details">
+<h4>Khóa IELTS 6.0 <span class="highlight-badge">Khóa Tăng Cường</span> <span class="status-badge"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span></h4>
+<p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ôn luyện cường độ cao, bứt tốc điểm số</p>
+</div>
+</div>
+<div class="accordion-right">
+<div class="attendance-stats">
+<div class="att-label">Điểm danh</div>
+<div class="att-value text-success">27/27 buổi</div>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem; font-weight: bold;"></i>
+</div>
+</div>
+</div>
+</div><div id="courseDetailsContainer" style="display: none;"><div class="course-detail-view fade-in" id="detail-course-0" style="display: none;"><div class="mb-4 text-start"><button class="btn btn-outline-secondary rounded-pill px-4" onclick="hideCourseDetail()"><i class="bi bi-arrow-left me-2"></i> Quay lại danh sách khóa học</button></div><div class="accordion-content-inner p-4" style="background: #fff;">
+<!-- Header -->
+<div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
+<h4 style="font-weight: 800; margin: 0; color: var(--text-heading); font-size: 1.4rem;">TD.TVD-IELTS-PRE-27.12.2024-19:30</h4>
+<span class="badge" style="background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 20px; border: 1px solid #bbf7d0; font-size: 0.9rem;">Completed</span>
+</div>
+<!-- Info Row -->
+<div class="row mb-4 g-3">
+<!-- Classmates -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-people me-2 text-muted"></i> Your classmates</p>
+<p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; line-height: 1.3;">DOLBies who share this learning experience with you</p>
+<div class="d-flex">
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754613_2065387549758146619_13551008470814114_724087f73396107bcc14e8ef670533bc.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 3;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754630_2065387549758146619_13551008470814114_643164bbd0f1d63e35c859d2fb2e0e5e.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 2;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754643_2065387549758146619_13551008470814114_dac14a7fbc37d6510a0d72cbd9827ea5.jpg" style="width: 32px; height: 32px; z-index: 1;"/>
+</div>
+</div>
+<!-- Duration -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-calendar3 me-2 text-muted"></i> Course duration</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 4px;">Start: 27/12/2024</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0;">End: 28/02/2025</p>
+</div>
+<!-- Teachers -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-person-video3 me-2 text-muted"></i> Teachers</p>
+<div class="d-flex align-items-center mt-2">
+<div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 40px; height: 40px; background: #22c55e; margin-right: -10px; z-index: 2; border: 2px solid white; font-weight: bold;">HH</div>
+<img class="rounded-circle border border-2 border-white" src="https://randomuser.me/api/portraits/men/32.jpg" style="width: 40px; height: 40px; z-index: 1;"/>
+</div>
+</div>
+</div>
+<!-- Fire Banner -->
+<div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 32px;">
+<div style="background: #fed7d7; width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">🔥</div>
+<div>
+<h5 style="color: #c53030; font-weight: 700; margin-bottom: 4px; font-size: 1.1rem;">Làm bài luyện tập để bắt đầu streak của bạn</h5>
+<p style="color: #e53e3e; margin: 0; font-size: 0.95rem;">Chăm chỉ làm bài mỗi ngày để tăng streak nhé!</p>
+</div>
+</div>
+<!-- 4 Circular Progress Cards -->
+<div class="row g-3 mb-5">
+<!-- Progress 1 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb;">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">27</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">27</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Course progress</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Các buổi đã học</p>
+</div>
+</div>
+<!-- Progress 2 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #e0e7ff; transform: rotate(45deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(-45deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">26</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">27</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Attendance</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Mức độ chăm chỉ</p>
+</div>
+</div>
+<!-- Progress 3 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb; transform: rotate(-45deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(45deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">56</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">66</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Practice</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Luyện tập thêm</p>
+</div>
+</div>
+<!-- Progress 4 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb;">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">04</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">04</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Assignments</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Bài tập quan trọng</p>
+</div>
+</div>
+</div>
+<!-- Section: Quá trình đi học -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Quá trình đi học</h4>
+<div style="border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; background: #f0fdf4; margin-bottom: 16px;">
+<p style="color: #166534; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">BUỔI HỌC CUỐI CÙNG CỦA BẠN</p>
+<h5 style="color: #15803d; font-weight: 800; margin-bottom: 16px;">Chúc mừng bạn đã hoàn thành khóa học!</h5>
+<div class="d-flex flex-wrap gap-4 mb-3 pb-3" style="font-size: 0.95rem; color: #374151; border-bottom: 1px solid #bbf7d0;">
+<div><strong>Buổi 28</strong> <span style="color: #2563eb; margin-left: 8px;">• Standard</span></div>
+<div><i class="bi bi-calendar3 me-1 text-muted"></i> Mon, 24/03</div>
+<div><i class="bi bi-clock me-1 text-muted"></i> 19:30 - 21:30</div>
+<div><i class="bi bi-journal-text me-1 text-muted"></i> TD.TVD</div>
+<div><i class="bi bi-door-open me-1 text-muted"></i> TD.TVD.R2</div>
+</div>
+<p style="margin-bottom: 8px; color: #4b5563;">Bài học dự kiến: <strong>R20 - Revision + Final test</strong></p>
+<p style="margin-bottom: 0; color: #4b5563; display: flex; align-items: center;">Giáo viên dự kiến: <img src="https://randomuser.me/api/portraits/men/32.jpg" style="width: 24px; height: 24px; border-radius: 50%; margin: 0 8px;"/> <strong>Long Tong Phi</strong></p>
+</div>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; display: flex; flex-wrap: wrap;">
+<div style="padding: 24px; width: 100%; border-bottom: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-size: 1.05rem; margin: 0;">Lớp đã diễn ra được <strong>27 / 27</strong> buổi</p>
+</div>
+<div class="row w-100 m-0">
+<div class="col-md-6" style="padding: 24px; border-right: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">ĐI HỌC</p>
+<div class="d-flex align-items-center gap-3 mb-3">
+<span class="badge" style="background: #e0e7ff; color: #4338ca; padding: 6px 10px;">P 96%</span>
+<span style="color: #111827;"><strong>26 buổi</strong> có mặt</span>
+</div>
+<div class="d-flex align-items-center gap-3">
+<span class="badge" style="background: #ffedd5; color: #c2410c; padding: 6px 10px;">A 4%</span>
+<span style="color: #111827;"><strong>1 buổi</strong> vắng mặt</span>
+</div>
+</div>
+<div class="col-md-6" style="padding: 24px;">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">BUỔI HỌC ĐÃ DIỄN RA</p>
+<p style="margin: 0; font-size: 1.1rem; color: #111827;"><strong>27 buổi</strong> standard</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-5 mt-4 pt-4 border-top" id="attendanceHistory0">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 24px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Số ngày có mặt</h4>
+<div id="attendanceScroll0" style="max-height: 150px; overflow: hidden; transition: max-height 0.3s ease; position: relative;">
+<div class="row">
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 1 (27/12/2024): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 2 (30/12/2024): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 3 (01/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 4 (03/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 5 (06/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 6 (08/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 7 (10/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 8 (13/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 9 (15/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 10 (17/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 11 (20/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 12 (22/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 13 (24/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 14 (27/01/2025): Có mặt</li>
+</ul>
+</div>
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 15 (29/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 16 (31/01/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 17 (03/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 18 (05/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 19 (07/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 20 (10/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 21 (12/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 22 (14/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 23 (17/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 24 (19/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 25 (21/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 26 (24/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 27 (26/02/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--primary-color); font-weight: bold;"><i class="bi bi-award-fill me-2"></i> Final Exam (28/02/2025)</li>
+</ul>
+</div>
+</div>
+<div id="attendanceFade0" style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, white); pointer-events: none;"></div>
+</div>
+<div class="text-center mt-3">
+<button class="btn btn-sm btn-outline-primary rounded-pill px-4" id="btnViewMoreAtt0" onclick="let b=document.getElementById('attendanceScroll0'); let f=document.getElementById('attendanceFade0'); if(b.style.maxHeight==='150px'){ b.style.maxHeight='600px'; b.style.overflowY='auto'; f.style.display='none'; this.innerHTML='Thu gọn &lt;i class=\'bi bi-chevron-up\'&gt;&lt;/i&gt;'; } else { b.style.maxHeight='150px'; b.style.overflowY='hidden'; f.style.display='block'; this.innerHTML='Xem thêm &lt;i class=\'bi bi-chevron-down\'&gt;&lt;/i&gt;'; }" style="font-weight: 600;">Xem thêm <i class="bi bi-chevron-down"></i></button>
+</div>
+</div>
+<!-- Section: Các bài test cần làm -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Các bài test cần làm</h4>
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 20px; color: #15803d; display: flex; align-items: center;">
+<i class="bi bi-journal-check me-3" style="font-size: 1.5rem;"></i>
+<span style="font-size: 1.05rem;">Bạn đã hoàn thành <a data-bs-toggle="collapse" href="#finalIeltsResult0" onclick="setTimeout(() =&gt; document.getElementById('finalIeltsResult0').scrollIntoView({behavior: 'smooth', block: 'start'}), 300);" style="color: #15803d; text-decoration: underline; font-weight: 700;">final test!</a></span>
+</div>
+</div><div class="collapse mt-5 text-start" id="finalIeltsResult0">
+<div class="ielts-official-card" style="background: #faf8f5; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+<!-- Dark Header -->
+<div style="background: #2b2a33; color: white; padding: 16px 24px; font-weight: 600; font-size: 1.15rem;">
+                                                    IELTS on Computer Academic
+                                                </div>
+<!-- Info Row -->
+<div style="padding: 24px; background: white; border-bottom: 1px solid #e5e7eb;">
+<div class="row g-4 align-items-center">
+<div class="col-6 col-md-2">
+<i class="bi bi-person-circle text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker name</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">DANG HUU NHA</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-fingerprint text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker ID</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">521179</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-building text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Centre number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">VN101</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-calendar-event text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test date</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">24/03/2025</p>
+</div>
+<div class="col-12 col-md-4">
+<i class="bi bi-file-earmark-text text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">TRF number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0; word-break: break-all;">25VN123456VUN101A</p>
+</div>
+</div>
+</div>
+<!-- Test Result Section -->
+<div style="padding: 32px 24px; background: #faf8f5;">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.5rem; margin: 0;"><span style="color: #991b1b; margin-right: 8px; font-weight: 900;">|</span> Your test result</h4>
+<a href="#" style="color: #4b5563; font-weight: 600; text-decoration: none; font-size: 0.95rem; display: flex; align-items: center;"><i class="bi bi-download me-2 text-danger" style="font-size: 1.2rem;"></i> Download eTRF</a>
+</div>
+<!-- Overall Card -->
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.15rem; margin-bottom: 8px;">Overall</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 2.2rem; margin: 0; line-height: 1;">5.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem;"></i>
+</div>
+<!-- Skills Cards -->
+<div class="row g-3">
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Listening</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">5.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Reading</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">5.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Writing</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">5.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Speaking</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Bài luyện tập -->
+<div class="mb-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Bài luyện tập</h4>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+<div class="d-flex gap-3 align-items-start mb-4">
+<div style="background: #e0e7ff; color: #4338ca; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+<i class="bi bi-layers"></i>
+</div>
+<div>
+<h5 style="font-weight: 800; margin-bottom: 4px; color: #111827; font-size: 1.15rem;">Bạn có 66 bài luyện tập</h5>
+<p style="color: #6b7280; margin: 0; font-size: 0.95rem;">Các bài luyện tập được làm dành riêng cho khóa học của bạn</p>
+</div>
+</div>
+<div class="d-flex flex-wrap gap-3">
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-diagram-3 text-muted"></i> <span><strong>1</strong> Roadmap</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-journal-text text-muted"></i> <span><strong>7</strong> vocabulary set</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-laptop text-muted"></i> <span><strong>6</strong> AI mock test</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">83%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>52</strong> exercise</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">98%</span>
+</span>
+</div>
+</div>
+</div>
+</div></div><div class="course-detail-view fade-in" id="detail-course-1" style="display: none;"><div class="mb-4 text-start"><button class="btn btn-outline-secondary rounded-pill px-4" onclick="hideCourseDetail()"><i class="bi bi-arrow-left me-2"></i> Quay lại danh sách khóa học</button></div><div class="accordion-content-inner p-4" style="background: #fff;">
+<!-- Header -->
+<div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
+<h4 style="font-weight: 800; margin: 0; color: var(--text-heading); font-size: 1.4rem;">TD-IELTS-4.0-27.05.2025-19:30</h4>
+<span class="badge" style="background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 20px; border: 1px solid #bbf7d0; font-size: 0.9rem;">Completed</span>
+</div>
+<!-- Info Row -->
+<div class="row mb-4 g-3">
+<!-- Classmates -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-people me-2 text-muted"></i> Your classmates</p>
+<p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; line-height: 1.3;">DOLBies who share this learning experience with you</p>
+<div class="d-flex">
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754613_2065387549758146619_13551008470814114_724087f73396107bcc14e8ef670533bc.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 3;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754630_2065387549758146619_13551008470814114_643164bbd0f1d63e35c859d2fb2e0e5e.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 2;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754643_2065387549758146619_13551008470814114_dac14a7fbc37d6510a0d72cbd9827ea5.jpg" style="width: 32px; height: 32px; z-index: 1;"/>
+</div>
+</div>
+<!-- Duration -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-calendar3 me-2 text-muted"></i> Course duration</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 4px;">Start: 27/05/2025</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0;">End: 30/07/2025</p>
+</div>
+<!-- Teachers -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-person-video3 me-2 text-muted"></i> Teachers</p>
+<div class="d-flex align-items-center mt-2">
+<img class="rounded-circle border border-2 border-white" src="https://randomuser.me/api/portraits/men/44.jpg" style="width: 40px; height: 40px; z-index: 1;"/>
+</div>
+</div>
+</div>
+<!-- Fire Banner -->
+<div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 32px;">
+<div style="background: #fed7d7; width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">🔥</div>
+<div>
+<h5 style="color: #c53030; font-weight: 700; margin-bottom: 4px; font-size: 1.1rem;">Làm bài luyện tập để bắt đầu streak của bạn</h5>
+<p style="color: #e53e3e; margin: 0; font-size: 0.95rem;">Chăm chỉ làm bài mỗi ngày để tăng streak nhé!</p>
+</div>
+</div>
+<!-- 4 Circular Progress Cards -->
+<div class="row g-3 mb-5">
+<!-- Progress 1 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb;">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">9</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">9</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Course progress</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Các buổi đã học</p>
+</div>
+</div>
+<!-- Progress 2 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #e0e7ff; transform: rotate(15deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(-15deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">7</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">9</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Attendance</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Mức độ chăm chỉ</p>
+</div>
+</div>
+<!-- Progress 3 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #e0e7ff; border-left-color: #e0e7ff; transform: rotate(-45deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(45deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">13</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">37</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Practice</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Luyện tập thêm</p>
+</div>
+</div>
+<!-- Progress 4 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #e0e7ff; border-left-color: #e0e7ff; transform: rotate(45deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(-45deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">02</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">03</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Assignments</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Bài tập quan trọng</p>
+</div>
+</div>
+</div>
+<!-- Section: Quá trình đi học -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Quá trình đi học</h4>
+<div style="border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; background: #f0fdf4; margin-bottom: 16px;">
+<p style="color: #166534; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">BUỔI HỌC CUỐI CÙNG CỦA GIAI ĐOẠN CỦA BẠN "GIAI ĐOẠN 3 - Writing"</p>
+<h5 style="color: #15803d; font-weight: 800; margin-bottom: 16px;">Chúc mừng bạn đã hoàn thành "Giai đoạn 3 - Writing"</h5>
+<div class="d-flex flex-wrap gap-4 mb-3 pb-3" style="font-size: 0.95rem; color: #374151; border-bottom: 1px solid #bbf7d0;">
+<div><strong>Buổi 9</strong> <span style="color: #2563eb; margin-left: 8px;">• Standard</span></div>
+<div><i class="bi bi-calendar3 me-1 text-muted"></i> Tue, 17/06</div>
+<div><i class="bi bi-clock me-1 text-muted"></i> 19:30 - 21:30</div>
+<div><i class="bi bi-journal-text me-1 text-muted"></i> TD</div>
+<div><i class="bi bi-door-open me-1 text-muted"></i> TD.R2</div>
+</div>
+<p style="margin-bottom: 8px; color: #4b5563;">Bài học dự kiến: <strong>W9 - Review &amp; Preview Final test</strong></p>
+<p style="margin-bottom: 0; color: #4b5563; display: flex; align-items: center;">Giáo viên dự kiến: <img src="https://randomuser.me/api/portraits/men/44.jpg" style="width: 24px; height: 24px; border-radius: 50%; margin: 0 8px;"/> <strong>Kỷ Vinh Hiển</strong></p>
+</div>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; display: flex; flex-wrap: wrap;">
+<div style="padding: 24px; width: 100%; border-bottom: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-size: 1.05rem; margin: 0;">Lớp đã diễn ra được <strong>9 / 9</strong> buổi</p>
+</div>
+<div class="row w-100 m-0">
+<div class="col-md-6" style="padding: 24px; border-right: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">ĐI HỌC</p>
+<div class="d-flex align-items-center gap-3 mb-3">
+<span class="badge" style="background: #e0e7ff; color: #4338ca; padding: 6px 10px;">P 78%</span>
+<span style="color: #111827;"><strong>7 buổi</strong> có mặt</span>
+</div>
+<div class="d-flex align-items-center gap-3">
+<span class="badge" style="background: #ffedd5; color: #c2410c; padding: 6px 10px;">A 22%</span>
+<span style="color: #111827;"><strong>2 buổi</strong> vắng mặt</span>
+</div>
+</div>
+<div class="col-md-6" style="padding: 24px;">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">BUỔI HỌC ĐÃ DIỄN RA</p>
+<p style="margin: 0; font-size: 1.1rem; color: #111827;"><strong>9 buổi</strong> standard</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-5 mt-4 pt-4 border-top" id="attendanceHistory1">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 24px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Số ngày có mặt</h4>
+<div id="attendanceScroll1" style="max-height: 150px; overflow: hidden; transition: max-height 0.3s ease; position: relative;">
+<div class="row">
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 1 (28/05/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 2 (30/05/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 3 (02/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 4 (04/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 5 (06/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 6 (09/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 7 (11/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 8 (13/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 9 (16/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 10 (18/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 11 (20/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 12 (23/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 13 (25/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 14 (27/06/2025): Có mặt</li>
+</ul>
+</div>
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 15 (30/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 16 (02/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 17 (04/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 18 (07/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 19 (09/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 20 (11/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 21 (14/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 22 (16/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 23 (18/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 24 (21/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 25 (23/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 26 (25/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 27 (28/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--primary-color); font-weight: bold;"><i class="bi bi-award-fill me-2"></i> Final Exam (30/07/2025)</li>
+</ul>
+</div>
+</div>
+<div id="attendanceFade1" style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, white); pointer-events: none;"></div>
+</div>
+<div class="text-center mt-3">
+<button class="btn btn-sm btn-outline-primary rounded-pill px-4" id="btnViewMoreAtt1" onclick="let b=document.getElementById('attendanceScroll1'); let f=document.getElementById('attendanceFade1'); if(b.style.maxHeight==='150px'){ b.style.maxHeight='600px'; b.style.overflowY='auto'; f.style.display='none'; this.innerHTML='Thu gọn &lt;i class=\'bi bi-chevron-up\'&gt;&lt;/i&gt;'; } else { b.style.maxHeight='150px'; b.style.overflowY='hidden'; f.style.display='block'; this.innerHTML='Xem thêm &lt;i class=\'bi bi-chevron-down\'&gt;&lt;/i&gt;'; }" style="font-weight: 600;">Xem thêm <i class="bi bi-chevron-down"></i></button>
+</div>
+</div>
+<!-- Section: Các bài test cần làm -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Các bài test cần làm</h4>
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 20px; color: #15803d; display: flex; align-items: center; margin-bottom: 24px;">
+<i class="bi bi-journal-check me-3" style="font-size: 1.5rem;"></i>
+<span style="font-size: 1.05rem;">Bạn đã hoàn thành <a data-bs-toggle="collapse" href="#finalIeltsResult1" onclick="setTimeout(() =&gt; document.getElementById('finalIeltsResult1').scrollIntoView({behavior: 'smooth', block: 'start'}), 300);" style="color: #15803d; text-decoration: underline; font-weight: 700;">final test!</a></span>
+</div>
+<!-- Assignment Box -->
+<div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+<div class="d-flex gap-3 align-items-start mb-2">
+<div style="background: #eff6ff; color: #2563eb; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+<i class="bi bi-file-earmark-text"></i>
+</div>
+<div>
+<h5 style="font-weight: 800; margin-bottom: 4px; color: #111827; font-size: 1.15rem;">Bạn có 1 assignments cần làm</h5>
+<p style="color: #6b7280; margin: 0; font-size: 0.95rem;">Hoàn thành các assignment để GV có thể đánh giá khả năng của bạn</p>
+</div>
+</div>
+<a href="#" style="color: #2563eb; font-weight: 600; text-decoration: none; font-size: 1rem;">Assignment <i class="bi bi-chevron-right"></i></a>
+</div>
+<p style="color: #dc2626; font-size: 0.95rem; font-weight: 600; margin-top: 16px; margin-bottom: 0;">Có 1 bài assignment hết hạn</p>
+</div>
+</div><div class="collapse mt-5 text-start" id="finalIeltsResult1">
+<div class="ielts-official-card" style="background: #faf8f5; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+<!-- Dark Header -->
+<div style="background: #2b2a33; color: white; padding: 16px 24px; font-weight: 600; font-size: 1.15rem;">
+                                                    IELTS on Computer Academic
+                                                </div>
+<!-- Info Row -->
+<div style="padding: 24px; background: white; border-bottom: 1px solid #e5e7eb;">
+<div class="row g-4 align-items-center">
+<div class="col-6 col-md-2">
+<i class="bi bi-person-circle text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker name</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">DANG HUU NHA</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-fingerprint text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker ID</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">521179</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-building text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Centre number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">VN101</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-calendar-event text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test date</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">17/06/2025</p>
+</div>
+<div class="col-12 col-md-4">
+<i class="bi bi-file-earmark-text text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">TRF number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0; word-break: break-all;">25VN654321VUN101A</p>
+</div>
+</div>
+</div>
+<!-- Test Result Section -->
+<div style="padding: 32px 24px; background: #faf8f5;">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.5rem; margin: 0;"><span style="color: #991b1b; margin-right: 8px; font-weight: 900;">|</span> Your test result</h4>
+<a href="#" style="color: #4b5563; font-weight: 600; text-decoration: none; font-size: 0.95rem; display: flex; align-items: center;"><i class="bi bi-download me-2 text-danger" style="font-size: 1.2rem;"></i> Download eTRF</a>
+</div>
+<!-- Overall Card -->
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.15rem; margin-bottom: 8px;">Overall</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 2.2rem; margin: 0; line-height: 1;">5.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem;"></i>
+</div>
+<!-- Skills Cards -->
+<div class="row g-3">
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Listening</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Reading</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Writing</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Speaking</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Bài luyện tập -->
+<div class="mb-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Bài luyện tập</h4>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+<div class="d-flex gap-3 align-items-start mb-4">
+<div style="background: #e0e7ff; color: #4338ca; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+<i class="bi bi-layers"></i>
+</div>
+<div>
+<h5 style="font-weight: 800; margin-bottom: 4px; color: #111827; font-size: 1.15rem;">Bạn có 37 bài luyện tập</h5>
+<p style="color: #6b7280; margin: 0; font-size: 0.95rem;">Các bài luyện tập được làm dành riêng cho khóa học của bạn</p>
+</div>
+</div>
+<div class="d-flex flex-wrap gap-3">
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-diagram-3 text-muted"></i> <span><strong>1</strong> Roadmap</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">8%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-journal-text text-muted"></i> <span><strong>5</strong> vocabulary set</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>10</strong> sample W/S</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">30%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>21</strong> exercise</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">48%</span>
+</span>
+</div>
+</div>
+</div>
+</div></div><div class="course-detail-view fade-in" id="detail-course-2" style="display: none;"><div class="mb-4 text-start"><button class="btn btn-outline-secondary rounded-pill px-4" onclick="hideCourseDetail()"><i class="bi bi-arrow-left me-2"></i> Quay lại danh sách khóa học</button></div><div class="accordion-content-inner p-4" style="background: #fff;">
+<!-- Header -->
+<div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
+<h4 style="font-weight: 800; margin: 0; color: var(--text-heading); font-size: 1.4rem;">TD-IELTS-5.0-27.08.2025-19:30</h4>
+<span class="badge" style="background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 20px; border: 1px solid #bbf7d0; font-size: 0.9rem;">Completed</span>
+</div>
+<!-- Info Row -->
+<div class="row mb-4 g-3">
+<!-- Classmates -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-people me-2 text-muted"></i> Your classmates</p>
+<p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; line-height: 1.3;">DOLBies who share this learning experience with you</p>
+<div class="d-flex">
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754613_2065387549758146619_13551008470814114_724087f73396107bcc14e8ef670533bc.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 3;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754630_2065387549758146619_13551008470814114_643164bbd0f1d63e35c859d2fb2e0e5e.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 2;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754643_2065387549758146619_13551008470814114_dac14a7fbc37d6510a0d72cbd9827ea5.jpg" style="width: 32px; height: 32px; z-index: 1;"/>
+</div>
+</div>
+<!-- Duration -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-calendar3 me-2 text-muted"></i> Course duration</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 4px;">Start: 27/08/2025</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0;">End: 29/10/2025</p>
+</div>
+<!-- Teachers -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-person-video3 me-2 text-muted"></i> Teachers</p>
+<div class="d-flex align-items-center mt-2">
+<img class="rounded-circle border border-2 border-white" src="https://randomuser.me/api/portraits/men/44.jpg" style="width: 40px; height: 40px; z-index: 1;"/>
+</div>
+</div>
+</div>
+<!-- Fire Banner -->
+<div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 32px;">
+<div style="background: #fed7d7; width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">🔥</div>
+<div>
+<h5 style="color: #c53030; font-weight: 700; margin-bottom: 4px; font-size: 1.1rem;">Làm bài luyện tập để bắt đầu streak của bạn</h5>
+<p style="color: #e53e3e; margin: 0; font-size: 0.95rem;">Chăm chỉ làm bài mỗi ngày để tăng streak nhé!</p>
+</div>
+</div>
+<!-- 4 Circular Progress Cards -->
+<div class="row g-3 mb-5">
+<!-- Progress 1 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb;">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">9</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">9</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Course progress</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Các buổi đã học</p>
+</div>
+</div>
+<!-- Progress 2 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #e0e7ff; transform: rotate(15deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(-15deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">7</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">9</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Attendance</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Mức độ chăm chỉ</p>
+</div>
+</div>
+<!-- Progress 3 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #e0e7ff; border-left-color: #e0e7ff; transform: rotate(-45deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(45deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">13</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">37</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Practice</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Luyện tập thêm</p>
+</div>
+</div>
+<!-- Progress 4 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #e0e7ff; border-left-color: #e0e7ff; transform: rotate(45deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(-45deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">02</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">03</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Assignments</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Bài tập quan trọng</p>
+</div>
+</div>
+</div>
+<!-- Section: Quá trình đi học -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Quá trình đi học</h4>
+<div style="border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; background: #f0fdf4; margin-bottom: 16px;">
+<p style="color: #166534; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">BUỔI HỌC CUỐI CÙNG CỦA GIAI ĐOẠN CỦA BẠN "GIAI ĐOẠN 3 - Reading"</p>
+<h5 style="color: #15803d; font-weight: 800; margin-bottom: 16px;">Chúc mừng bạn đã hoàn thành "Giai đoạn 3 - Reading"</h5>
+<div class="d-flex flex-wrap gap-4 mb-3 pb-3" style="font-size: 0.95rem; color: #374151; border-bottom: 1px solid #bbf7d0;">
+<div><strong>Buổi 9</strong> <span style="color: #2563eb; margin-left: 8px;">• Standard</span></div>
+<div><i class="bi bi-calendar3 me-1 text-muted"></i> Tue, 17/06</div>
+<div><i class="bi bi-clock me-1 text-muted"></i> 19:30 - 21:30</div>
+<div><i class="bi bi-journal-text me-1 text-muted"></i> TD</div>
+<div><i class="bi bi-door-open me-1 text-muted"></i> TD.R2</div>
+</div>
+<p style="margin-bottom: 8px; color: #4b5563;">Bài học dự kiến: <strong>W9 - Review &amp; Preview Final test</strong></p>
+<p style="margin-bottom: 0; color: #4b5563; display: flex; align-items: center;">Giáo viên dự kiến: <img src="https://randomuser.me/api/portraits/men/44.jpg" style="width: 24px; height: 24px; border-radius: 50%; margin: 0 8px;"/> <strong>Kỷ Vinh Hiển</strong></p>
+</div>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; display: flex; flex-wrap: wrap;">
+<div style="padding: 24px; width: 100%; border-bottom: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-size: 1.05rem; margin: 0;">Lớp đã diễn ra được <strong>9 / 9</strong> buổi</p>
+</div>
+<div class="row w-100 m-0">
+<div class="col-md-6" style="padding: 24px; border-right: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">ĐI HỌC</p>
+<div class="d-flex align-items-center gap-3 mb-3">
+<span class="badge" style="background: #e0e7ff; color: #4338ca; padding: 6px 10px;">P 78%</span>
+<span style="color: #111827;"><strong>7 buổi</strong> có mặt</span>
+</div>
+<div class="d-flex align-items-center gap-3">
+<span class="badge" style="background: #ffedd5; color: #c2410c; padding: 6px 10px;">A 22%</span>
+<span style="color: #111827;"><strong>2 buổi</strong> vắng mặt</span>
+</div>
+</div>
+<div class="col-md-6" style="padding: 24px;">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">BUỔI HỌC ĐÃ DIỄN RA</p>
+<p style="margin: 0; font-size: 1.1rem; color: #111827;"><strong>9 buổi</strong> standard</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-5 mt-4 pt-4 border-top" id="attendanceHistory2">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 24px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Số ngày có mặt</h4>
+<div id="attendanceScroll2" style="max-height: 150px; overflow: hidden; transition: max-height 0.3s ease; position: relative;">
+<div class="row">
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 1 (27/08/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 2 (29/08/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 3 (01/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 4 (03/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 5 (05/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 6 (08/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 7 (10/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 8 (12/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 9 (15/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 10 (17/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 11 (19/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 12 (22/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 13 (24/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 14 (26/09/2025): Có mặt</li>
+</ul>
+</div>
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 15 (29/09/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 16 (01/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 17 (03/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 18 (06/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 19 (08/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 20 (10/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 21 (13/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 22 (15/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 23 (17/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 24 (20/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 25 (22/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 26 (24/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 27 (27/10/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--primary-color); font-weight: bold;"><i class="bi bi-award-fill me-2"></i> Final Exam (29/10/2025)</li>
+</ul>
+</div>
+</div>
+<div id="attendanceFade2" style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, white); pointer-events: none;"></div>
+</div>
+<div class="text-center mt-3">
+<button class="btn btn-sm btn-outline-primary rounded-pill px-4" id="btnViewMoreAtt2" onclick="let b=document.getElementById('attendanceScroll2'); let f=document.getElementById('attendanceFade2'); if(b.style.maxHeight==='150px'){ b.style.maxHeight='600px'; b.style.overflowY='auto'; f.style.display='none'; this.innerHTML='Thu gọn &lt;i class=\'bi bi-chevron-up\'&gt;&lt;/i&gt;'; } else { b.style.maxHeight='150px'; b.style.overflowY='hidden'; f.style.display='block'; this.innerHTML='Xem thêm &lt;i class=\'bi bi-chevron-down\'&gt;&lt;/i&gt;'; }" style="font-weight: 600;">Xem thêm <i class="bi bi-chevron-down"></i></button>
+</div>
+</div>
+<div class="mb-5 mt-4 pt-4 border-top" id="attendanceHistory1">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 24px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Số ngày có mặt</h4>
+<div id="attendanceScroll1" style="max-height: 150px; overflow: hidden; transition: max-height 0.3s ease; position: relative;">
+<div class="row">
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 1 (28/05/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 2 (30/05/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 3 (02/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 4 (04/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 5 (06/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 6 (09/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 7 (11/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 8 (13/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 9 (16/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 10 (18/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 11 (20/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 12 (23/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 13 (25/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 14 (27/06/2025): Có mặt</li>
+</ul>
+</div>
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 15 (30/06/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 16 (02/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 17 (04/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 18 (07/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 19 (09/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 20 (11/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 21 (14/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 22 (16/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 23 (18/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 24 (21/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 25 (23/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 26 (25/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 27 (28/07/2025): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--primary-color); font-weight: bold;"><i class="bi bi-award-fill me-2"></i> Final Exam (30/07/2025)</li>
+</ul>
+</div>
+</div>
+<div id="attendanceFade1" style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, white); pointer-events: none;"></div>
+</div>
+<div class="text-center mt-3">
+<button class="btn btn-sm btn-outline-primary rounded-pill px-4" id="btnViewMoreAtt1" onclick="let b=document.getElementById('attendanceScroll1'); let f=document.getElementById('attendanceFade1'); if(b.style.maxHeight==='150px'){ b.style.maxHeight='500px'; b.style.overflowY='auto'; f.style.display='none'; this.innerHTML='Thu gọn &lt;i class=\'bi bi-chevron-up\'&gt;&lt;/i&gt;'; } else { b.style.maxHeight='150px'; b.style.overflowY='hidden'; f.style.display='block'; this.innerHTML='Xem thêm &lt;i class=\'bi bi-chevron-down\'&gt;&lt;/i&gt;'; }" style="font-weight: 600;">Xem thêm <i class="bi bi-chevron-down"></i></button>
+</div>
+</div>
+<!-- Section: Các bài test cần làm -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Các bài test cần làm</h4>
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 20px; color: #15803d; display: flex; align-items: center; margin-bottom: 24px;">
+<i class="bi bi-journal-check me-3" style="font-size: 1.5rem;"></i>
+<span style="font-size: 1.05rem;">Bạn đã hoàn thành <a data-bs-toggle="collapse" href="#finalIeltsResult2" onclick="setTimeout(() =&gt; document.getElementById('finalIeltsResult2').scrollIntoView({behavior: 'smooth', block: 'start'}), 300);" style="color: #15803d; text-decoration: underline; font-weight: 700;">final test!</a></span>
+</div>
+<!-- Assignment Box -->
+<div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+<div class="d-flex gap-3 align-items-start mb-2">
+<div style="background: #eff6ff; color: #2563eb; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+<i class="bi bi-file-earmark-text"></i>
+</div>
+<div>
+<h5 style="font-weight: 800; margin-bottom: 4px; color: #111827; font-size: 1.15rem;">Bạn có 1 assignments cần làm</h5>
+<p style="color: #6b7280; margin: 0; font-size: 0.95rem;">Hoàn thành các assignment để GV có thể đánh giá khả năng của bạn</p>
+</div>
+</div>
+<a href="#" style="color: #2563eb; font-weight: 600; text-decoration: none; font-size: 1rem;">Assignment <i class="bi bi-chevron-right"></i></a>
+</div>
+<p style="color: #dc2626; font-size: 0.95rem; font-weight: 600; margin-top: 16px; margin-bottom: 0;">Có 1 bài assignment hết hạn</p>
+</div>
+</div><div class="collapse mt-5 text-start" id="finalIeltsResult2">
+<div class="ielts-official-card" style="background: #faf8f5; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+<!-- Dark Header -->
+<div style="background: #2b2a33; color: white; padding: 16px 24px; font-weight: 600; font-size: 1.15rem;">
+                                                    IELTS on Computer Academic
+                                                </div>
+<!-- Info Row -->
+<div style="padding: 24px; background: white; border-bottom: 1px solid #e5e7eb;">
+<div class="row g-4 align-items-center">
+<div class="col-6 col-md-2">
+<i class="bi bi-person-circle text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker name</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">DANG HUU NHA</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-fingerprint text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker ID</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">521179</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-building text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Centre number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">VN101</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-calendar-event text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test date</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">17/09/2025</p>
+</div>
+<div class="col-12 col-md-4">
+<i class="bi bi-file-earmark-text text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">TRF number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0; word-break: break-all;">25VN987654VUN101A</p>
+</div>
+</div>
+</div>
+<!-- Test Result Section -->
+<div style="padding: 32px 24px; background: #faf8f5;">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.5rem; margin: 0;"><span style="color: #991b1b; margin-right: 8px; font-weight: 900;">|</span> Your test result</h4>
+<a href="#" style="color: #4b5563; font-weight: 600; text-decoration: none; font-size: 0.95rem; display: flex; align-items: center;"><i class="bi bi-download me-2 text-danger" style="font-size: 1.2rem;"></i> Download eTRF</a>
+</div>
+<!-- Overall Card -->
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.15rem; margin-bottom: 8px;">Overall</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 2.2rem; margin: 0; line-height: 1;">6.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem;"></i>
+</div>
+<!-- Skills Cards -->
+<div class="row g-3">
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Listening</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">7.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Reading</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Writing</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Speaking</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Bài luyện tập -->
+<div class="mb-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Bài luyện tập</h4>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+<div class="d-flex gap-3 align-items-start mb-4">
+<div style="background: #e0e7ff; color: #4338ca; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+<i class="bi bi-layers"></i>
+</div>
+<div>
+<h5 style="font-weight: 800; margin-bottom: 4px; color: #111827; font-size: 1.15rem;">Bạn có 51 bài luyện tập</h5>
+<p style="color: #6b7280; margin: 0; font-size: 0.95rem;">Các bài luyện tập được làm dành riêng cho khóa học của bạn</p>
+</div>
+</div>
+<div class="d-flex flex-wrap gap-3">
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-diagram-3 text-muted"></i> <span><strong>1</strong> Roadmap</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">8%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-journal-text text-muted"></i> <span><strong>5</strong> vocabulary set</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>10</strong> sample W/S</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">30%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>21</strong> exercise</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">48%</span>
+</span>
+</div>
+</div>
+</div>
+</div></div><div class="course-detail-view fade-in" id="detail-course-3" style="display: none;"><div class="mb-4 text-start"><button class="btn btn-outline-secondary rounded-pill px-4" onclick="hideCourseDetail()"><i class="bi bi-arrow-left me-2"></i> Quay lại danh sách khóa học</button></div><div class="accordion-content-inner p-4" style="background: #fff;">
+<!-- Header -->
+<div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
+<h4 style="font-weight: 800; margin: 0; color: var(--text-heading); font-size: 1.4rem;">TD.VVN-IELTS-6.0-16.01.2026-17:30</h4>
+<span class="badge" style="background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 20px; border: 1px solid #bbf7d0; font-size: 0.9rem;">Completed</span>
+</div>
+<!-- Info Row -->
+<div class="row mb-4 g-3">
+<!-- Classmates -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-people me-2 text-muted"></i> Your classmates</p>
+<p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; line-height: 1.3;">DOLBies who share this learning experience with you</p>
+<div class="d-flex">
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754613_2065387549758146619_13551008470814114_724087f73396107bcc14e8ef670533bc.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 3;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754630_2065387549758146619_13551008470814114_643164bbd0f1d63e35c859d2fb2e0e5e.jpg" style="width: 32px; height: 32px; margin-right: -10px; z-index: 2;"/>
+<img class="rounded-circle border border-2 border-white" src="/images/students/1790926754643_2065387549758146619_13551008470814114_dac14a7fbc37d6510a0d72cbd9827ea5.jpg" style="width: 32px; height: 32px; z-index: 1;"/>
+</div>
+</div>
+<!-- Duration -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-calendar3 me-2 text-muted"></i> Course duration</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 4px;">Start: 10/08/2026</p>
+<p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0;">End: 26/09/2026</p>
+</div>
+<!-- Teachers -->
+<div class="col-md-4">
+<p style="color: var(--text-heading); font-weight: 700; margin-bottom: 8px;"><i class="bi bi-person-video3 me-2 text-muted"></i> Teachers</p>
+<div class="d-flex align-items-center mt-2">
+<img class="rounded-circle border border-2 border-white" src="https://randomuser.me/api/portraits/men/32.jpg" style="width: 40px; height: 40px; z-index: 1;"/>
+</div>
+</div>
+</div>
+<!-- Fire Banner -->
+<div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 32px;">
+<div style="background: #fed7d7; width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">🔥</div>
+<div>
+<h5 style="color: #c53030; font-weight: 700; margin-bottom: 4px; font-size: 1.1rem;">Làm bài luyện tập để bắt đầu streak của bạn</h5>
+<p style="color: #e53e3e; margin: 0; font-size: 0.95rem;">Chăm chỉ làm bài mỗi ngày để tăng streak nhé!</p>
+</div>
+</div>
+<!-- 4 Circular Progress Cards -->
+<div class="row g-3 mb-5">
+<!-- Progress 1 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb;">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">10</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">10</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Course progress</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Các buổi đã học</p>
+</div>
+</div>
+<!-- Progress 2 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #e0e7ff; transform: rotate(35deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(-35deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">9</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">10</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Attendance</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Mức độ chăm chỉ</p>
+</div>
+</div>
+<!-- Progress 3 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #e0e7ff; border-left-color: #e0e7ff; transform: rotate(-15deg);">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(15deg);">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">19</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">65</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Practice</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Luyện tập thêm</p>
+</div>
+</div>
+<!-- Progress 4 -->
+<div class="col-6 col-lg-3">
+<div class="text-center p-4 h-100" style="border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+<div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; border: 6px solid #e0e7ff; position: relative; border-top-color: #2563eb; border-right-color: #2563eb; border-bottom-color: #2563eb; border-left-color: #2563eb;">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<span style="font-weight: 800; font-size: 1.2rem; line-height: 1; color: #111827;">07</span>
+<span style="font-size: 0.75rem; color: #6b7280; border-top: 1px solid #d1d5db; width: 30px; margin-top: 2px; padding-top: 2px;">07</span>
+</div>
+</div>
+<h6 style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">Assignments</h6>
+<p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Bài tập quan trọng</p>
+</div>
+</div>
+</div>
+<!-- Section: Quá trình đi học -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Quá trình đi học</h4>
+<div style="border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; background: #f0fdf4; margin-bottom: 16px;">
+<p style="color: #166534; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">BUỔI HỌC CUỐI CÙNG CỦA GIAI ĐOẠN CỦA BẠN "GIAI ĐOẠN 3 - Writing"</p>
+<h5 style="color: #15803d; font-weight: 800; margin-bottom: 16px;">Chúc mừng bạn đã hoàn thành "Giai đoạn 3 - Writing"</h5>
+<div class="d-flex flex-wrap gap-4 mb-3 pb-3" style="font-size: 0.95rem; color: #374151; border-bottom: 1px solid #bbf7d0;">
+<div><strong>Buổi 18</strong> <span style="color: #dc2626; margin-left: 8px;">• Cancel</span></div>
+<div><i class="bi bi-calendar3 me-1 text-muted"></i> Wed, 25/02</div>
+<div><i class="bi bi-clock me-1 text-muted"></i> 17:30 - 21:00</div>
+<div><i class="bi bi-journal-text me-1 text-muted"></i> TD.VVN</div>
+<div><i class="bi bi-door-open me-1 text-muted"></i> TD.VVN.R1</div>
+</div>
+<p style="margin-bottom: 8px; color: #4b5563;">Bài học dự kiến: <strong>cancel - Buổi học bị hủy</strong></p>
+<p style="margin-bottom: 0; color: #4b5563; display: flex; align-items: center;">Giáo viên dự kiến: <img src="https://randomuser.me/api/portraits/men/32.jpg" style="width: 24px; height: 24px; border-radius: 50%; margin: 0 8px;"/> <strong>Nguyễn Minh Dương</strong></p>
+</div>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; display: flex; flex-wrap: wrap;">
+<div style="padding: 24px; width: 100%; border-bottom: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-size: 1.05rem; margin: 0;">Lớp đã diễn ra được <strong>10 / 10</strong> buổi</p>
+</div>
+<div class="row w-100 m-0">
+<div class="col-md-6" style="padding: 24px; border-right: 1px solid var(--border-color);">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">ĐI HỌC</p>
+<div class="d-flex align-items-center gap-3 mb-3">
+<span class="badge" style="background: #e0e7ff; color: #4338ca; padding: 6px 10px;">P 90%</span>
+<span style="color: #111827;"><strong>9 buổi</strong> có mặt</span>
+</div>
+<div class="d-flex align-items-center gap-3">
+<span class="badge" style="background: #ffedd5; color: #c2410c; padding: 6px 10px;">A 10%</span>
+<span style="color: #111827;"><strong>1 buổi</strong> vắng mặt</span>
+</div>
+</div>
+<div class="col-md-6" style="padding: 24px;">
+<p style="color: #6b7280; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 16px;">BUỔI HỌC ĐÃ DIỄN RA</p>
+<p style="margin: 0; font-size: 1.1rem; color: #111827;"><strong>10 buổi</strong> standard</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-5 mt-4 pt-4 border-top" id="attendanceHistory3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 24px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Số ngày có mặt</h4>
+<div id="attendanceScroll3" style="max-height: 150px; overflow: hidden; transition: max-height 0.3s ease; position: relative;">
+<div class="row">
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 1 (10/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 2 (12/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 3 (14/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 4 (15/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 5 (17/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 6 (19/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 7 (21/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 8 (22/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 9 (24/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 10 (26/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 11 (28/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 12 (29/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 13 (31/08/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 14 (02/09/2026): Có mặt</li>
+</ul>
+</div>
+<div class="col-md-6">
+<ul style="list-style: none; padding: 0; margin: 0;">
+<li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 15 (04/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 16 (05/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 17 (07/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 18 (09/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 19 (11/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 20 (12/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 21 (14/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 22 (16/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 23 (18/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 24 (19/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 25 (21/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 26 (23/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem;"><i class="bi bi-check-circle-fill text-success me-2"></i> Buổi 27 (25/09/2026): Có mặt</li><li style="padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.95rem; color: var(--primary-color); font-weight: bold;"><i class="bi bi-award-fill me-2"></i> Final Exam (26/09/2026)</li>
+</ul>
+</div>
+</div>
+<div id="attendanceFade3" style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, white); pointer-events: none;"></div>
+</div>
+<div class="text-center mt-3">
+<button class="btn btn-sm btn-outline-primary rounded-pill px-4" id="btnViewMoreAtt3" onclick="let b=document.getElementById('attendanceScroll3'); let f=document.getElementById('attendanceFade3'); if(b.style.maxHeight==='150px'){ b.style.maxHeight='600px'; b.style.overflowY='auto'; f.style.display='none'; this.innerHTML='Thu gọn &lt;i class=\'bi bi-chevron-up\'&gt;&lt;/i&gt;'; } else { b.style.maxHeight='150px'; b.style.overflowY='hidden'; f.style.display='block'; this.innerHTML='Xem thêm &lt;i class=\'bi bi-chevron-down\'&gt;&lt;/i&gt;'; }" style="font-weight: 600;">Xem thêm <i class="bi bi-chevron-down"></i></button>
+</div>
+</div>
+<!-- Section: Các bài test cần làm -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Các bài test cần làm</h4>
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px 20px; color: #15803d; display: flex; align-items: center;">
+<i class="bi bi-journal-check me-3" style="font-size: 1.5rem;"></i>
+<span style="font-size: 1.05rem;">Bạn đã hoàn thành <a data-bs-toggle="collapse" href="#finalIeltsResult3" onclick="setTimeout(() =&gt; document.getElementById('finalIeltsResult3').scrollIntoView({behavior: 'smooth', block: 'start'}), 300);" style="color: #15803d; text-decoration: underline; font-weight: 700;">final test!</a></span>
+</div>
+</div><div class="collapse mt-5 text-start" id="finalIeltsResult3">
+<div class="ielts-official-card" style="background: #faf8f5; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+<!-- Dark Header -->
+<div style="background: #2b2a33; color: white; padding: 16px 24px; font-weight: 600; font-size: 1.15rem;">
+                                                    IELTS on Computer Academic
+                                                </div>
+<!-- Info Row -->
+<div style="padding: 24px; background: white; border-bottom: 1px solid #e5e7eb;">
+<div class="row g-4 align-items-center">
+<div class="col-6 col-md-2">
+<i class="bi bi-person-circle text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker name</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">DANG HUU NHA</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-fingerprint text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test taker ID</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">521179</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-building text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Centre number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">VN101</p>
+</div>
+<div class="col-6 col-md-2">
+<i class="bi bi-calendar-event text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Test date</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0;">30/09/2026</p>
+</div>
+<div class="col-12 col-md-4">
+<i class="bi bi-file-earmark-text text-muted mb-2 d-block" style="font-size: 1.4rem;"></i>
+<p style="color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">TRF number</p>
+<p style="color: #111827; font-size: 0.95rem; font-weight: 700; margin: 0; word-break: break-all;">26VN521179VUN101A</p>
+</div>
+</div>
+</div>
+<!-- Test Result Section -->
+<div style="padding: 32px 24px; background: #faf8f5;">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.5rem; margin: 0;"><span style="color: #991b1b; margin-right: 8px; font-weight: 900;">|</span> Your test result</h4>
+<a href="#" style="color: #4b5563; font-weight: 600; text-decoration: none; font-size: 0.95rem; display: flex; align-items: center;"><i class="bi bi-download me-2 text-danger" style="font-size: 1.2rem;"></i> Download eTRF</a>
+</div>
+<!-- Overall Card -->
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.15rem; margin-bottom: 8px;">Overall</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 2.2rem; margin: 0; line-height: 1;">7.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem;"></i>
+</div>
+<!-- Skills Cards -->
+<div class="row g-3">
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Listening</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">8.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Reading</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">7.5</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Writing</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+<div class="col-6 col-lg-3">
+<div onmouseout="this.style.borderColor='#e5e7eb'" onmouseover="this.style.borderColor='#991b1b'" style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s;">
+<div>
+<p style="color: #111827; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px;">Speaking</p>
+<p style="color: #991b1b; font-weight: 900; font-size: 1.6rem; margin: 0; line-height: 1;">6.0</p>
+</div>
+<i class="bi bi-chevron-right text-muted"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Bài luyện tập -->
+<div class="mb-5">
+<h4 style="font-weight: 800; color: #111827; font-size: 1.25rem; margin-bottom: 16px;"><span style="color: #2563eb; margin-right: 8px; font-weight: 900;">|</span> Bài luyện tập</h4>
+<div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px;">
+<div class="d-flex gap-3 align-items-start mb-4">
+<div style="background: #e0e7ff; color: #4338ca; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+<i class="bi bi-layers"></i>
+</div>
+<div>
+<h5 style="font-weight: 800; margin-bottom: 4px; color: #111827; font-size: 1.15rem;">Bạn có 65 bài luyện tập</h5>
+<p style="color: #6b7280; margin: 0; font-size: 0.95rem;">Các bài luyện tập được làm dành riêng cho khóa học của bạn</p>
+</div>
+</div>
+<div class="d-flex flex-wrap gap-3">
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-diagram-3 text-muted"></i> <span><strong>2</strong> Roadmap</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">2%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-journal-text text-muted"></i> <span><strong>7</strong> vocabulary set</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>27</strong> sample W/S</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-pc-display text-muted"></i> <span><strong>5</strong> Phòng thi ảo</span> <span class="badge" style="background: #e0e7ff; color: #4338ca; border-radius: 20px; padding: 4px 8px;">0%</span>
+</span>
+<span style="border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; font-size: 0.95rem; color: #374151; background: #fff; display: flex; align-items: center; gap: 8px;">
+<i class="bi bi-file-earmark-text text-muted"></i> <span><strong>24</strong> exercise</span> <span class="badge" style="background: #dbeafe; color: #1d4ed8; border-radius: 20px; padding: 4px 8px;">79%</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Section: Button Show Result & Result Container -->
+<div class="mt-4 pt-4 text-center border-top">
+</div>
+</div></div></div>
+</div>
+</div>
+</div>
+<section class="hall-of-fame-section fade-in">
+<div class="container">
+<div class="hof-header">
+<h2 class="hof-title">Bảng vàng của học viên DOL</h2>
+<div class="hof-actions">
+<form class="compact-search-form" id="searchForm">
+<input class="compact-search-input" id="searchInput" placeholder="Nhập Candidate ID" required="" type="text"/>
+<button class="compact-search-btn" type="submit">
+<i class="bi bi-search"></i>
+</button>
+</form>
+<div class="search-error" id="searchError"><i class="bi bi-exclamation-triangle-fill me-1"></i> Không tìm thấy dữ liệu cho Candidate ID này.</div>
+<div class="hof-tabs">
+<button class="hof-tab-btn active" type="button">IELTS</button>
+<button class="hof-tab-btn" type="button">SAT</button>
+<button class="hof-tab-btn" type="button">THCS</button>
+</div>
+</div>
+</div>
+<div class="hof-grid" id="hofGrid">
+<!-- Rendered by JS -->
+</div>
+</div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.score-bar');
+                bars.forEach(bar => {
+                    const score = parseFloat(bar.getAttribute('data-score'));
+                    const percentage = (score / 9.0) * 100;
+                    bar.style.width = percentage + '%';
+                });
+            }, 300);
+            
+            // DỮ LIỆU HỌC VIÊN THỰC TẾ
+            const hofTeachers = [
+                { id: 1, name: "Lê Minh", uni: "THPT Chuyên Lê Hồng Phong", score: "8.5", avatar: "/images/students/1790926754613_2065387549758146619_13551008470814114_724087f73396107bcc14e8ef670533bc.jpg", category: "IELTS" },
+                { id: 2, name: "Nguyễn Trọng", uni: "Học sinh lớp 12", score: "8.5", avatar: "/images/students/1790926754630_2065387549758146619_13551008470814114_643164bbd0f1d63e35c859d2fb2e0e5e.jpg", category: "IELTS" },
+                { id: 3, name: "Phương Nam", uni: "Sinh viên ĐH KHTN", score: "7.5", avatar: "/images/students/1790926754643_2065387549758146619_13551008470814114_dac14a7fbc37d6510a0d72cbd9827ea5.jpg", category: "IELTS" },
+                { id: 4, name: "Khánh Thiện", uni: "Học sinh xuất sắc", score: "7.5", avatar: "/images/students/1790926754654_2065387549758146619_13551008470814114_2e5456bfd81201ea46a75cc208957d9c.jpg", category: "THCS" },
+                { id: 5, name: "Văn Thịnh", uni: "Học viên tiêu biểu", score: "8.0", avatar: "/images/students/1790926754663_2065387549758146619_13551008470814114_ba7097924c37fcff799013c0dd2b9695.jpg", category: "IELTS" },
+                { id: 6, name: "Hoàng Phúc", uni: "Tăng 2.0 Band sau 3 tháng", score: "8.0", avatar: "/images/students/1790926754672_2065387549758146619_13551008470814114_48ac4dc79b46456808d7e21d3a6a4df9.jpg", category: "THCS" },
+                { id: 7, name: "Hiển Long", uni: "Lớp 12 Đào Sơn Tây", score: "5.5+", avatar: "/images/students/1790926754694_2065387549758146619_13551008470814114_a06e0d4957e3ec532ebb3d86b46e4e0b.jpg", category: "IELTS" },
+                { id: 8, name: "Vũ Minh Tuấn", uni: "Sinh viên năm 1 ĐH FPT", score: "6.0", avatar: "/images/students/1790926754722_2065387549758146619_13551008470814114_0a65938dc9ce4086e9207cd83104178b.jpg", category: "SAT" },
+                { id: 9, name: "Trịnh Hoàng Anh Khoa", uni: "Sinh viên năm 3 Bách Khoa", score: "8.0", avatar: "/images/students/1790926754731_2065387549758146619_13551008470814114_023f34b1627917dfd05342bbcbf3b15e.jpg", category: "SAT" },
+                { id: 10, name: "Hoàng Hân", uni: "Đạt học bổng du học", score: "8.5", avatar: "/images/students/1790926754740_2065387549758146619_13551008470814114_0cd084537ea4b3e1c9ecf245ebd44d01.jpg", category: "IELTS" }
+            ];
+            
+            function renderHof(data) {
+                const grid = document.getElementById('hofGrid');
+                if(!grid) return;
+                
+                let html = '';
+                data.forEach(t => {
+                    html += `
+                        <div class="hof-card">
+                            <div class="hof-img-container">
+                                <div class="ribbon">
+                                    <span class="ribbon-score">${t.score}</span>
+                                    <span class="ribbon-text">IELTS</span>
+                                </div>
+                                <img src="${t.avatar}" alt="${t.name}" class="hof-img">
+                            </div>
+                            <div class="hof-info">
+                                <div class="hof-name">${t.name}</div>
+                                <p class="hof-uni">${t.uni}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                grid.innerHTML = html;
+            }
+            
+            // Initial render
+            renderHof(hofTeachers);
+            
+            // Setup filter
+            const tabs = document.querySelectorAll('.hof-tab-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const cat = this.textContent.trim();
+                    const filtered = hofTeachers.filter(t => t.category === cat);
+                    renderHof(filtered.length > 0 ? filtered : hofTeachers); // Fallback nếu rỗng
+                });
+            });
+
+            
+            
+            // COURSE DETAIL LOGIC
+            window.showCourseDetail = function(detailId) {
+                document.getElementById('courseListSection').style.display = 'none';
+                
+                // hide all details first
+                document.querySelectorAll('.course-detail-view').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // show target detail
+                document.getElementById('courseDetailsContainer').style.display = 'block';
+                document.getElementById(detailId).style.display = 'block';
+                
+                // scroll to top of section
+                document.querySelector('.timeline-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+            
+            window.hideCourseDetail = function() {
+                document.getElementById('courseDetailsContainer').style.display = 'none';
+                document.getElementById('courseListSection').style.display = 'block';
+                
+                // hide all details
+                document.querySelectorAll('.course-detail-view').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                document.querySelector('.timeline-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+
+            // ACCORDION LOGIC
+            const accordions = document.querySelectorAll('.accordion-card');
+            accordions.forEach(acc => {
+                const header = acc.querySelector('.accordion-header');
+                header.addEventListener('click', () => {
+                    // Close others
+                    accordions.forEach(other => {
+                        if (other !== acc && other.classList.contains('active')) {
+                            other.classList.remove('active');
+                            other.querySelector('.accordion-content').style.maxHeight = null;
+                        }
+                    });
+                    
+                    // Toggle current
+                    acc.classList.toggle('active');
+                    const content = acc.querySelector('.accordion-content');
+                    if (acc.classList.contains('active')) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    } else {
+                        content.style.maxHeight = null;
+                    }
+                });
+            });
+
+            
+            // IELTS Score Toggle Logic
+            const btnToggleResult = document.getElementById('btnToggleResult');
+            const finalIeltsResult = document.getElementById('finalIeltsResult');
+            if (btnToggleResult && finalIeltsResult) {
+                finalIeltsResult.addEventListener('show.bs.collapse', function () {
+                    btnToggleResult.innerHTML = '<i class="bi bi-eye-slash-fill me-2"></i> Ẩn điểm thi cuối kỳ';
+                });
+                finalIeltsResult.addEventListener('hide.bs.collapse', function () {
+                    btnToggleResult.innerHTML = '<i class="bi bi-award-fill me-2"></i> Hiển thị điểm thi cuối kỳ';
+                });
+            }
+
+            // SEARCH LOGIC
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const input = document.getElementById('searchInput').value.trim().toUpperCase();
+                    const errorDiv = document.getElementById('searchError');
+                    const resultSection = document.getElementById('searchResultsSection');
+                    const hofSection = document.querySelector('.hall-of-fame-section');
+                    const btn = searchForm.querySelector('button[type="submit"]');
+                    const searchInput = document.getElementById('searchInput');
+                    
+                    if(errorDiv) errorDiv.style.display = 'none';
+                    if(resultSection) resultSection.style.display = 'none';
+                    
+                    btn.disabled = true;
+                    searchInput.disabled = true;
+                    const originalBtnContent = btn.innerHTML;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                    
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        searchInput.disabled = false;
+                        btn.innerHTML = originalBtnContent;
+                        
+                        if (input === '521179' || input === 'DANG HUU NHA') {
+                            if (hofSection) hofSection.style.display = 'none';
+                            if (resultSection) {
+                                resultSection.style.display = 'block';
+                                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        } else {
+                            if(errorDiv) errorDiv.style.display = 'block';
+                        }
+                    }, 3000);
+                });
+            }
+        });
+    </script>
+}
+</div></div>

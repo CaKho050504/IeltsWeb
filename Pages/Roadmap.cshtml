@@ -1,0 +1,260 @@
+@page "/lo-trinh"
+@{
+    ViewData["Title"] = "Lộ trình IELTS";
+}
+
+<style>
+    .page-hero {
+        background-color: var(--bg-gray);
+        padding: 80px 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .timeline {
+        position: relative;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 0;
+    }
+    
+    .timeline::after {
+        content: '';
+        position: absolute;
+        width: 3px;
+        background-color: var(--primary-color);
+        opacity: 0.2;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        margin-left: -1.5px;
+    }
+    
+    .timeline-item {
+        padding: 20px 50px;
+        position: relative;
+        width: 50%;
+    }
+    
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        right: -12px;
+        background-color: white;
+        border: 4px solid var(--primary-color);
+        top: 40px;
+        border-radius: 50%;
+        z-index: 1;
+        box-shadow: 0 0 0 4px rgba(255,255,255,0.8);
+    }
+    
+    .left { left: 0; }
+    .right { left: 50%; }
+    .right::after { left: -12px; }
+    
+    .timeline-content {
+        background-color: white;
+        position: relative;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .timeline-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .timeline-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .timeline-body {
+        padding: 32px;
+    }
+    
+    .timeline-target {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 8px;
+    }
+    
+    .timeline-features li {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        font-size: 15px;
+        color: var(--text-body);
+        line-height: 1.5;
+    }
+
+    .timeline-features i {
+        margin-top: 3px;
+    }
+
+    /* Colors for each step */
+    .step-1 .timeline-target { color: #f59e0b; }
+    .step-1 .badge { background-color: #fef3c7; color: #d97706; }
+    
+    .step-2 .timeline-target { color: #10b981; }
+    .step-2 .badge { background-color: #d1fae5; color: #059669; }
+    
+    .step-3 .timeline-target { color: #3b82f6; }
+    .step-3 .badge { background-color: #dbeafe; color: #2563eb; }
+    
+    .step-4 .timeline-target { color: #8b5cf6; }
+    .step-4 .badge { background-color: #ede9fe; color: #7c3aed; }
+    
+    @@media screen and (max-width: 768px) {
+        .timeline::after { left: 40px; }
+        .timeline-item {
+            width: 100%;
+            padding-left: 80px;
+            padding-right: 15px;
+        }
+        .left::after, .right::after { left: 28px; }
+        .right { left: 0%; }
+    }
+</style>
+
+<div class="page-hero fade-in">
+    <div class="container">
+        <h1 class="section-title mb-3">Lộ trình IELTS Tối Ưu Từng Cấp Độ</h1>
+        <p class="section-subtitle">Chương trình cá nhân hóa, kết hợp phương pháp Linearthinking giúp rút ngắn thời gian ôn luyện.</p>
+    </div>
+</div>
+
+<div class="container py-5 fade-in">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Lộ trình chuẩn 4 chặng</h2>
+        <p class="text-muted">Từ con số 0 đến IELTS 7.0+ một cách khoa học nhất.</p>
+    </div>
+
+    <div class="timeline">
+        <!-- Bước 1: Pre -->
+        <div class="timeline-item left step-1">
+            <div class="timeline-content">
+                <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=800&auto=format&fit=crop" alt="Khởi điểm" class="timeline-img" />
+                <div class="timeline-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="badge px-3 py-2 rounded-pill fw-bold">Chặng 1: 8 Tuần</div>
+                    </div>
+                    <h3 class="timeline-target">IELTS Pre (Đầu ra 3.0 - 4.0)</h3>
+                    <p class="text-muted fst-italic mb-3">Dành cho học viên mất gốc, nền tảng yếu.</p>
+                    <ul class="timeline-features list-unstyled mb-0">
+                        <li><i class="bi bi-check-circle-fill text-warning me-2"></i> Lấy lại toàn bộ nền tảng ngữ pháp căn bản (các thì, từ loại, cấu trúc câu).</li>
+                        <li><i class="bi bi-check-circle-fill text-warning me-2"></i> Xây dựng 2000+ từ vựng cốt lõi theo chủ đề quen thuộc.</li>
+                        <li><i class="bi bi-check-circle-fill text-warning me-2"></i> Chuẩn hóa phát âm IPA, luyện phản xạ nghe nói chậm.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bước 2: Foundation -->
+        <div class="timeline-item right step-2">
+            <div class="timeline-content">
+                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop" alt="Foundation" class="timeline-img" />
+                <div class="timeline-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="badge px-3 py-2 rounded-pill fw-bold">Chặng 2: 10 Tuần</div>
+                    </div>
+                    <h3 class="timeline-target">IELTS Foundation (Đầu ra 4.0 - 5.0)</h3>
+                    <p class="text-muted fst-italic mb-3">Xây móng vững chắc, làm quen với đề thi IELTS.</p>
+                    <ul class="timeline-features list-unstyled mb-0">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Bắt đầu ứng dụng phương pháp Linearthinking vào Đọc - Viết.</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Làm quen các dạng bài Listening & Reading cơ bản trong IELTS.</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Luyện tập Speaking Part 1 trôi chảy, hình thành đoạn văn Writing Task 1.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bước 3: Intensive -->
+        <div class="timeline-item left step-3">
+            <div class="timeline-content">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop" alt="Intensive" class="timeline-img" />
+                <div class="timeline-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="badge px-3 py-2 rounded-pill fw-bold">Chặng 3: 10 Tuần</div>
+                        <span class="badge bg-danger rounded-pill"><i class="bi bi-star-fill"></i> Phổ biến nhất</span>
+                    </div>
+                    <h3 class="timeline-target">IELTS Intensive (Đầu ra 5.0 - 6.0)</h3>
+                    <p class="text-muted fst-italic mb-3">Tăng tốc độ làm bài và tối ưu hóa điểm số.</p>
+                    <ul class="timeline-features list-unstyled mb-0">
+                        <li><i class="bi bi-check-circle-fill text-primary me-2"></i> Xử lý mượt mà các bài Reading dài và Listening Part 3, 4 phức tạp.</li>
+                        <li><i class="bi bi-check-circle-fill text-primary me-2"></i> Chinh phục Writing Task 2 với cấu trúc luận điểm logic, không bí ý.</li>
+                        <li><i class="bi bi-check-circle-fill text-primary me-2"></i> Luyện phản xạ Speaking Part 2 & 3 tự nhiên với từ vựng Academic.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bước 4: Master -->
+        <div class="timeline-item right step-4">
+            <div class="timeline-content">
+                <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=800&auto=format&fit=crop" alt="Master" class="timeline-img" />
+                <div class="timeline-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="badge px-3 py-2 rounded-pill fw-bold">Chặng 4: 12 Tuần</div>
+                    </div>
+                    <h3 class="timeline-target">IELTS Master (Đầu ra 6.0 - 7.0+)</h3>
+                    <p class="text-muted fst-italic mb-3">Vượt ngưỡng an toàn, nhắm mục tiêu điểm tuyệt đối.</p>
+                    <ul class="timeline-features list-unstyled mb-0">
+                        <li><i class="bi bi-check-circle-fill" style="color: #8b5cf6;"></i> Thực hành thi thử (Mock test) liên tục dưới áp lực phòng thi thật.</li>
+                        <li><i class="bi bi-check-circle-fill" style="color: #8b5cf6;"></i> Chữa bài 1-1 chuyên sâu các lỗi sai cố hữu (đặc biệt là Speaking & Writing).</li>
+                        <li><i class="bi bi-check-circle-fill" style="color: #8b5cf6;"></i> Nâng cấp vốn từ vựng idioms, collocations và cấu trúc câu ăn điểm cao.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Intensive Track Banner -->
+<section class="section-padding fade-in" style="background-color: var(--bg-gray); padding: 80px 0;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="d-inline-flex align-items-center mb-3 px-3 py-2 bg-white rounded-pill" style="color: #ef4444; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <i class="bi bi-clock-history me-2"></i> Bạn đang cần bằng IELTS gấp?
+                </div>
+                <h2 class="fw-900 mb-4 text-heading" style="font-size: 36px;">Chương Trình Học Tăng Cường<br/><span style="color: #ef4444;">(Intensive Track)</span></h2>
+                <p class="fs-5 text-body mb-4">DOL thiết kế riêng giải pháp cho các học viên cần có bằng cấp tốc để nộp hồ sơ du học, xét tốt nghiệp hoặc định cư.</p>
+                
+                <div class="d-flex mb-3 align-items-start">
+                    <div class="me-3 mt-1 text-danger fs-4"><i class="bi bi-lightning-fill"></i></div>
+                    <div>
+                        <h5 class="fw-bold mb-1">Rút ngắn 1/2 thời gian học</h5>
+                        <p class="text-muted">Tăng tần suất lên 5-6 buổi/tuần thay vì 3 buổi/tuần. Học liên tục không gián đoạn.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-3 align-items-start">
+                    <div class="me-3 mt-1 text-danger fs-4"><i class="bi bi-person-check-fill"></i></div>
+                    <div>
+                        <h5 class="fw-bold mb-1">Kèm cặp 1-1 sát sao</h5>
+                        <p class="text-muted">Cố vấn học tập theo dõi tiến độ mỗi ngày, chữa bài tập về nhà trong vòng 24h.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-4 align-items-start">
+                    <div class="me-3 mt-1 text-danger fs-4"><i class="bi bi-shield-check"></i></div>
+                    <div>
+                        <h5 class="fw-bold mb-1">Cam kết chuẩn đầu ra</h5>
+                        <p class="text-muted">Đảm bảo hoàn thành mục tiêu đúng deadline ký kết bằng hợp đồng văn bản.</p>
+                    </div>
+                </div>
+                
+                <a href="/lien-he" class="btn-dol btn-primary-dol px-4 py-3 fs-5">Đăng ký Test Trình Độ & Xếp Lớp Ngay</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=1000&auto=format&fit=crop" alt="Học IELTS Tăng Cường" class="img-fluid rounded-4 shadow-lg" />
+            </div>
+        </div>
+    </div>
+</section>

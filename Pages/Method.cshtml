@@ -1,0 +1,192 @@
+@page "/phuong-phap"
+@{
+    ViewData["Title"] = "Phương pháp tư duy";
+}
+
+<style>
+    .method-hero {
+        background-color: var(--bg-gray);
+        padding: 80px 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .method-block {
+        padding: 100px 0;
+        overflow: hidden;
+    }
+    
+    .method-block:nth-child(even) {
+        background-color: var(--bg-gray);
+    }
+    
+    .method-number-big {
+        font-size: 10rem;
+        font-weight: 900;
+        color: rgba(209, 66, 66, 0.04); /* Red transparent */
+        line-height: 1;
+        position: absolute;
+        top: -60px;
+        left: -20px;
+        z-index: 0;
+    }
+    
+    .method-content-inner {
+        position: relative;
+        z-index: 1;
+    }
+
+    .method-img-wrapper {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .method-img-wrapper:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+    }
+
+    .method-img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .method-img-wrapper:hover .method-img {
+        transform: scale(1.05);
+    }
+    
+    .comparison-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+        padding: 24px;
+        margin-top: 30px;
+    }
+</style>
+
+<div class="method-hero fade-in">
+    <div class="container">
+        <h1 class="section-title mb-3">Phương pháp Tư Duy Độc Quyền</h1>
+        <p class="section-subtitle">Hiểu bản chất ngôn ngữ - Không học vẹt - Áp dụng linh hoạt.</p>
+    </div>
+</div>
+
+<section class="method-block fade-in">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 position-relative order-2 order-lg-1">
+                <div class="method-number-big">01</div>
+                <div class="method-content-inner">
+                    <h2 class="fw-900 mb-4 text-heading" style="font-size: 36px;">Tư duy logic liên kết</h2>
+                    <p class="fs-5 text-body mb-4">Thay vì đọc từng chữ và dịch từng câu rời rạc, phương pháp hướng dẫn bạn cách tìm mối liên hệ giữa các câu, các đoạn văn bằng tư duy logic tuyến tính.</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1 fs-5"></i> <span class="fw-600 fs-5">Đọc hiểu nhanh hơn gấp 2 lần.</span></li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1 fs-5"></i> <span class="fw-600 fs-5">Không bị rối khi gặp từ vựng mới khó.</span></li>
+                    </ul>
+                    
+                    <!-- Card so sánh gộp chung -->
+                    <div class="comparison-card">
+                        <h5 class="fw-800 mb-4 border-bottom pb-3">Cách học cũ vs Phương pháp mới</h5>
+                        <div class="d-flex mb-4">
+                            <div class="text-muted me-3 fs-4"><i class="bi bi-x-circle-fill"></i></div>
+                            <div><strong>Cách cũ:</strong> Dịch từng từ sang tiếng Việt -> Ghép nghĩa lại. Rất tốn thời gian, dễ sai lệch nghĩa.</div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="text-primary-dol me-3 fs-4"><i class="bi bi-check-circle-fill"></i></div>
+                            <div><strong>Cách mới:</strong> Tìm chủ ngữ, động từ chính -> Nắm ý chính của câu -> Liên kết logic với câu trước/sau.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-1 order-lg-2">
+                <div class="method-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop" class="method-img" alt="Tư duy logic liên kết">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="method-block fade-in">
+    <div class="container">
+        <div class="row align-items-center g-5 flex-lg-row-reverse">
+            <div class="col-lg-6 position-relative order-2 order-lg-1">
+                <div class="method-number-big">02</div>
+                <div class="method-content-inner">
+                    <h2 class="fw-900 mb-4 text-heading" style="font-size: 36px;">Sự Đơn Giản Hóa (Simplification)</h2>
+                    <p class="fs-5 text-body mb-4">Áp dụng toán học vào ngôn ngữ: Gom cụm và loại bỏ các thành phần phụ rườm rà trong một câu phức tạp tiếng Anh để đưa về cấu trúc cốt lõi S-V-O.</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1 fs-5"></i> <span class="fw-600 fs-5">Nhìn thấu cấu trúc ngữ pháp nhanh chóng.</span></li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1 fs-5"></i> <span class="fw-600 fs-5">Xử lý gọn gàng các câu dài ngoằn trong Reading.</span></li>
+                    </ul>
+                    
+                    <div class="comparison-card">
+                        <h5 class="fw-800 mb-4 border-bottom pb-3">Cách học cũ vs Phương pháp mới</h5>
+                        <div class="d-flex mb-4">
+                            <div class="text-muted me-3 fs-4"><i class="bi bi-x-circle-fill"></i></div>
+                            <div><strong>Cách cũ:</strong> Cố gắng nhớ hàng chục công thức ngữ pháp rời rạc, máy móc, dễ nhầm lẫn khi đi thi.</div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="text-primary-dol me-3 fs-4"><i class="bi bi-check-circle-fill"></i></div>
+                            <div><strong>Cách mới:</strong> Chỉ cần nắm vững các mô hình cấu trúc lõi cơ bản, mọi câu phức tạp đều là biến thể của cấu trúc lõi.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-1 order-lg-2">
+                <div class="method-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1000&auto=format&fit=crop" class="method-img" alt="Sự Đơn Giản Hóa">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="method-block fade-in">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 position-relative order-2 order-lg-1">
+                <div class="method-number-big">03</div>
+                <div class="method-content-inner">
+                    <h2 class="fw-900 mb-4 text-heading" style="font-size: 36px;">Sự Cụ Thể Hóa (Specification)</h2>
+                    <p class="fs-5 text-body mb-4">Tuyệt chiêu vô giá cho Speaking và Writing. Từ một ý tưởng chung chung (General), liên tục đặt câu hỏi logic để chẻ nhỏ thành các ý cụ thể (Specific) giúp bài nói/viết sâu sắc và dài hơn.</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1 fs-5"></i> <span class="fw-600 fs-5">Tuyệt đối không bao giờ "bí ý" khi làm bài.</span></li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1 fs-5"></i> <span class="fw-600 fs-5">Logic chặt chẽ, đạt điểm tối đa tiêu chí Coherence.</span></li>
+                    </ul>
+
+                    <div class="comparison-card">
+                        <h5 class="fw-800 mb-4 border-bottom pb-3">Cách học cũ vs Phương pháp mới</h5>
+                        <div class="d-flex mb-4">
+                            <div class="text-muted me-3 fs-4"><i class="bi bi-x-circle-fill"></i></div>
+                            <div><strong>Cách cũ:</strong> Học thuộc văn mẫu hoặc brainstorm ý tưởng một cách lộn xộn, vô tổ chức khiến giám khảo khó hiểu.</div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="text-primary-dol me-3 fs-4"><i class="bi bi-check-circle-fill"></i></div>
+                            <div><strong>Cách mới:</strong> Suy luận logic theo đường thẳng (Linear). A sinh ra B, B sinh ra C. Đảm bảo tính mạch lạc tuyệt đối.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-1 order-lg-2">
+                <div class="method-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?q=80&w=1000&auto=format&fit=crop" class="method-img" alt="Sự Cụ Thể Hóa">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding fade-in" style="background-color: var(--primary-color); padding: 80px 0;">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4 text-white">Trải Nghiệm Sự Đột Phá Trong Tư Duy Cùng DOL?</h2>
+        <p class="fs-5 text-white opacity-75 mb-5">Hàng ngàn học viên đã vượt mục tiêu nhờ Linearthinking. Tới lượt bạn!</p>
+        <a href="/lien-he" class="btn-dol btn-outline-dol px-5 py-3 fs-5" style="background-color: white; color: var(--primary-color);">Đăng ký học thử miễn phí</a>
+    </div>
+</section>

@@ -1,0 +1,28 @@
+<header class="site-header">
+    <div class="container header-container">
+        <a href="/" class="dol-logo" style="display: flex; align-items: center;">
+            <img src="/images/Lgo.png" alt="DOL IELTS" style="height: 50px; width: auto; object-fit: contain; padding: 5px 0;" />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <ul class="nav-menu" id="mainNav">
+            <li><a href="/" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")">Trang chủ</a></li>
+            <li><a href="/khoa-hoc" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Courses" ? "active" : "")">Khóa học IELTS</a></li>
+            <li><a href="/lo-trinh" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Roadmap" ? "active" : "")">Lộ trình</a></li>
+            <li><a href="/phuong-phap" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Method" ? "active" : "")">Phương pháp</a></li>
+            <li><a href="/giao-vien" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Teachers" ? "active" : "")">Giáo viên</a></li>
+            <li><a href="/blog" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Blog" ? "active" : "")">Blog</a></li>
+            <li><a href="/tra-cuu-diem" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/ScoreLookup" ? "active" : "")">Tra Cứu</a></li>
+        </ul>
+
+        <!-- CTA Right -->
+        <div class="header-cta d-none d-lg-block">
+            <a href="/lien-he" class="btn-dol btn-primary-dol">Đăng ký học</a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="mobile-menu-btn d-lg-none" onclick="document.getElementById('mainNav').classList.toggle('show')">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+</header>

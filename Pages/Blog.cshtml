@@ -1,0 +1,143 @@
+@page "/blog"
+@{
+    ViewData["Title"] = "Kiến thức IELTS";
+    
+    var blogs = new[] {
+        new { 
+            Title = "5 cách cải thiện IELTS Reading nhanh chóng", 
+            Category = "IELTS Reading", 
+            Date = "15/09/2026", 
+            Desc = "Khám phá cách áp dụng Logical IELTS để tăng tốc độ đọc và độ chính xác trong bài thi Reading.",
+            Img = "https://placehold.co/600x400/0B2545/FFFFFF?text=Reading+Tips"
+        },
+        new { 
+            Title = "Speaking Part 2 nên chuẩn bị như thế nào?", 
+            Category = "IELTS Speaking", 
+            Date = "12/09/2026", 
+            Desc = "Chiến lược 1 phút chuẩn bị thần thánh giúp bạn nói liên tục 2 phút không bí ý tưởng.",
+            Img = "https://placehold.co/600x400/13315C/FFFFFF?text=Speaking+Part+2"
+        },
+        new { 
+            Title = "Cách xây dựng vốn từ vựng Academic hiệu quả", 
+            Category = "Vocabulary", 
+            Date = "05/09/2026", 
+            Desc = "Học từ vựng theo cụm (Collocations) thay vì học từ đơn lẻ để đạt điểm Lexical Resource cao.",
+            Img = "https://placehold.co/600x400/2E7D32/FFFFFF?text=Vocabulary"
+        },
+        new { 
+            Title = "Những lỗi thường gặp trong IELTS Writing Task 1", 
+            Category = "IELTS Writing", 
+            Date = "01/09/2026", 
+            Desc = "Tổng hợp các lỗi sai 'chết người' khiến bạn mất điểm oan trong bài viết mô tả biểu đồ.",
+            Img = "https://placehold.co/600x400/C62828/FFFFFF?text=Writing+Task+1"
+        },
+        new { 
+            Title = "Phân biệt False và Not Given cực chuẩn", 
+            Category = "IELTS Reading", 
+            Date = "28/08/2026", 
+            Desc = "Dẹp bỏ nỗi ám ảnh lớn nhất của sĩ tử IELTS với mẹo phân tích câu đơn giản.",
+            Img = "https://placehold.co/600x400/FCA311/FFFFFF?text=False+vs+Not+Given"
+        },
+        new { 
+            Title = "Lộ trình tự học IELTS từ 0 đến 6.5", 
+            Category = "Lộ trình", 
+            Date = "20/08/2026", 
+            Desc = "Hướng dẫn chi tiết từng bước cho người mới bắt đầu muốn tự ôn luyện tại nhà.",
+            Img = "https://placehold.co/600x400/6A1B9A/FFFFFF?text=Study+Plan"
+        }
+    };
+}
+
+<style>
+    .blog-hero {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+    
+    .blog-card {
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    
+    .blog-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .blog-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .blog-category {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--accent-color);
+        margin-bottom: 10px;
+    }
+    
+    .blog-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+    
+    .blog-date {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+</style>
+
+<div class="blog-hero fade-in">
+    <div class="container">
+        <h1 class="fw-bold mb-3">Kiến thức IELTS</h1>
+        <p class="fs-5 opacity-75 max-w-700 mx-auto">Cập nhật những chiến thuật, tài liệu và phương pháp học IELTS mới nhất.</p>
+    </div>
+</div>
+
+<div class="container py-5 fade-in">
+    <div class="row g-4">
+        @foreach (var b in blogs)
+        {
+            <div class="col-lg-4 col-md-6">
+                <a href="#" class="text-decoration-none">
+                    <div class="blog-card">
+                        <img src="@b.Img" alt="@b.Title" class="blog-img" />
+                        <div class="blog-content">
+                            <div class="blog-category">@b.Category</div>
+                            <h3 class="blog-title">@b.Title</h3>
+                            <p class="text-muted mb-4">@b.Desc</p>
+                            <div class="blog-date"><i class="bi bi-calendar3 me-2"></i>@b.Date</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+    
+    <div class="text-center mt-5">
+        <button class="btn btn-outline-primary px-4 py-2 fw-bold">Xem thêm bài viết</button>
+    </div>
+</div>

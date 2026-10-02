@@ -1,0 +1,1057 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Các Khóa Học IELTS Từ Cơ Bản Đến 7.0+ Uy Tín &amp; Chất Lượng";
+}
+
+<style>
+    /* Hero Section */
+    .hero-section {
+        background-color: var(--bg-gray);
+        padding: 60px 0;
+        position: relative;
+        
+    }
+    .hero-title {
+        font-size: 40px;
+        line-height: 48px;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 24px;
+    }
+    .hero-subtitle {
+        font-size: 18px;
+        color: var(--text-body);
+        margin-bottom: 32px;
+        line-height: 1.6;
+    }
+    .hero-image-wrapper {
+        position: relative;
+        border-radius: var(--border-radius-lg);
+        
+        box-shadow: var(--shadow-lg);
+    }
+    .hero-image-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Course Cards (DOL Style) */
+    .dol-course-card {
+        background: white;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        padding: 24px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+    }
+    .dol-course-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-4px);
+    }
+    .course-badge {
+        background: #FFF0F0;
+        color: var(--primary-color);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 14px;
+        display: inline-block;
+        margin-bottom: 16px;
+    }
+    .course-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 12px;
+    }
+    .course-info {
+        font-size: 15px;
+        color: var(--text-body);
+        margin-bottom: 24px;
+        flex-grow: 1;
+    }
+    .course-info ul {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+    .course-info li {
+        margin-bottom: 8px;
+    }
+
+    /* Teacher Card */
+    .dol-teacher-card {
+        background: white;
+        border-radius: var(--border-radius);
+        
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+    .dol-teacher-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+    .teacher-img {
+        width: 100%;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+    }
+    .teacher-details {
+        padding: 24px;
+    }
+    .teacher-score {
+        display: inline-flex;
+        background: var(--primary-color);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+    .teacher-name {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 8px;
+    }
+
+    /* Teacher Slider Card */
+    .teacher-slider-card {
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+    .teacher-slider-card:hover {
+        transform: translateY(-8px);
+    }
+    .teacher-image-box {
+        position: relative;
+        border-radius: 20px;
+        
+        aspect-ratio: 3/4;
+    }
+    .teacher-image-box .t-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+    .score-overlay {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--primary-color);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 13px;
+        z-index: 2;
+        box-shadow: var(--shadow-sm);
+        white-space: nowrap;
+    }
+    .teacher-slider-info {
+        padding: 0 10px;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        background: var(--primary-color);
+        color: white;
+        padding: 64px 0;
+    }
+    .stat-item {
+        text-align: center;
+        padding: 24px;
+    }
+    .stat-number {
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+    .stat-label {
+        font-size: 16px;
+        font-weight: 600;
+        opacity: 0.9;
+    }
+
+    /* Testimonial Card */
+    .testimonial-card {
+        background: var(--bg-gray);
+        padding: 32px;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+    }
+    
+    /* Hero Buttons */
+    .hero-section {
+        padding: 80px 0 !important; /* Update spacing */
+    }
+    .hero-section .btn-dol {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hero-section .btn-dol:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(209, 66, 66, 0.25);
+    }
+    .hero-section .btn-outline-dol:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Core Values */
+    .feature-card {
+        background: white;
+        border-radius: 12px;
+        padding: 32px 24px;
+        height: 100%;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    .feature-icon {
+        font-size: 40px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+    .feature-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 16px;
+    }
+    .feature-desc {
+        color: #6c757d;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Roadmap Card */
+    .roadmap-card {
+        background: white;
+        border-radius: 16px;
+        
+        border: 1px solid var(--border-color);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Hall of Fame Grid */
+    .hof-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 60px;
+    }
+    @@media (min-width: 768px) {
+        .hof-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (min-width: 992px) {
+        .hof-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+    .hof-card {
+        background: white;
+        border-radius: 16px;
+        
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.3s ease;
+    }
+    .hof-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-color);
+    }
+    .hof-img-wrapper {
+        position: relative;
+        aspect-ratio: 3/4;
+        
+    }
+    .hof-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .hof-score {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--primary-color);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 13px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .hof-info {
+        padding: 16px;
+        text-align: center;
+    }
+    .hof-name {
+        font-weight: 800;
+        font-size: 16px;
+        color: var(--text-heading);
+        margin-bottom: 4px;
+    }
+    .hof-desc {
+        font-size: 13px;
+        color: var(--text-body);
+        margin: 0;
+    }
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+    .roadmap-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .popular-course {
+        border-color: #FF9800;
+        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.15);
+    }
+    .popular-badge {
+        position: absolute;
+        top: 15px;
+        right: -32px;
+        background: #FF9800;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 35px;
+        transform: rotate(45deg);
+        z-index: 2;
+        text-transform: uppercase;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .roadmap-header {
+        padding: 30px 24px;
+        text-align: center;
+        color: white;
+    }
+    .bg-red-gradient {
+        background: linear-gradient(135deg, #d14242 0%, #991f1f 100%);
+    }
+    .bg-orange-gradient {
+        background: linear-gradient(135deg, #FF9800 0%, #E65100 100%);
+    }
+    .bg-blue-gradient {
+        background: linear-gradient(135deg, #1976D2 0%, #0D47A1 100%);
+    }
+    .roadmap-level {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+    .roadmap-target {
+        font-size: 14px;
+        font-weight: 600;
+        background: rgba(0,0,0,0.2);
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+    .roadmap-body {
+        padding: 24px;
+        flex-grow: 1;
+    }
+    .roadmap-time {
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.1rem;
+    }
+    .roadmap-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .roadmap-features li {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        font-size: 0.95rem;
+        color: var(--text-body);
+        line-height: 1.5;
+    }
+    .section-title-large {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 16px;
+    }
+
+    /* New Features CSS */
+    html {
+        scroll-behavior: smooth;
+    }
+    section {
+        scroll-margin-top: 140px;
+    }
+    .sticky-subnav {
+        position: sticky;
+        top: 60px; /* Assuming header is ~60px */
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .sticky-subnav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        overflow-x: auto;
+    }
+    .sticky-subnav a {
+        color: var(--text-heading);
+        font-weight: 700;
+        font-size: 16px;
+        padding: 16px 0;
+        display: inline-block;
+        text-decoration: none;
+        position: relative;
+        white-space: nowrap;
+    }
+    .sticky-subnav a:hover {
+        color: var(--primary-color);
+    }
+    .sticky-subnav a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: var(--primary-color);
+        transition: width 0.3s ease;
+    }
+    .sticky-subnav a:hover::after {
+        width: 100%;
+    }
+    
+    .trust-badges {
+        margin-top: 40px;
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .trust-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .trust-badge-icon {
+        width: 48px;
+        height: 48px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        color: var(--primary-color);
+        font-size: 24px;
+    }
+    .trust-badge-text {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--text-heading);
+    }
+
+    .media-logos {
+        display: flex;
+        justify-content: center;
+        gap: 48px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .media-logo img {
+        height: 40px;
+        opacity: 0.5;
+        transition: all 0.3s ease;
+        filter: grayscale(100%);
+    }
+    .media-logo:hover img {
+        opacity: 1;
+        filter: grayscale(0%);
+    }
+
+    .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 */
+        height: 0;
+        border-radius: 16px;
+        
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<!-- 1. Hero Section -->
+<section class="hero-section ">
+<div class="container">
+<div class="row align-items-center g-5">
+<div class="col-lg-6">
+<div class="d-inline-flex align-items-center mb-3 px-3 py-2" style="background: #FFF0F0; border-radius: 20px; color: var(--primary-color); font-weight: 600; font-size: 14px;">
+<i class="bi bi-star-fill me-2"></i> Hệ thống đào tạo IELTS Tư Duy
+                </div>
+<h1 class="hero-title">Các Khóa Học IELTS Từ Cơ Bản Đến 7.0+ Uy Tín &amp; Chất Lượng</h1>
+<p class="hero-subtitle">Tăng 1-1.5 Band Mỗi 9 Tuần. Phương Pháp Tư Duy Độc Quyền. Nền Tảng Công Nghệ Hiện Đại. Đội Ngũ Giáo Viên Tận Tâm.</p>
+<div class="d-flex flex-wrap gap-3">
+<a class="btn-dol btn-primary-dol" href="/lien-he">Đăng ký tư vấn ngay</a>
+<a class="btn-dol btn-outline-dol" href="/tra-cuu-diem">Tra cứu điểm thi</a>
+</div>
+<div class="trust-badges mt-4 ">
+<div class="trust-badge">
+<div class="trust-badge-icon"><i class="bi bi-patch-check-fill"></i></div>
+<div class="trust-badge-text">Đối tác Bạch Kim<br/>IDP &amp; British Council</div>
+</div>
+<div class="trust-badge">
+<div class="trust-badge-icon"><i class="bi bi-people-fill"></i></div>
+<div class="trust-badge-text">Hơn 10,000 học viên<br/>đạt IELTS 7.0+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="hero-image-wrapper" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+<img alt="Học viên DOL IELTS" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&amp;w=800&amp;auto=format&amp;fit=crop" style="border-radius: 16px;"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sticky Sub Navigation -->
+<div class="sticky-subnav d-none d-md-block ">
+<div class="container">
+<ul>
+<li><a href="#lo-trinh">Khóa học IELTS</a></li>
+<li><a href="#phuong-phap">Phương pháp</a></li>
+<li><a href="#giao-vien">Đội ngũ giáo viên</a></li>
+<li><a href="#hoc-vien">Cảm nhận học viên</a></li>
+<li><a href="#bao-chi">Báo chí &amp; Giải thưởng</a></li>
+</ul>
+</div>
+</div>
+<!-- 2. Giới thiệu Phương Pháp -->
+<section class="section-padding bg-white " id="phuong-phap" style="padding: 80px 0;">
+<div class="container">
+<div class="text-center">
+<h2 class="section-title-large">Hệ Phương Pháp Linearthinking</h2>
+<p class="section-subtitle" style="margin-bottom: 48px;">Độc quyền, thông minh, giúp rút ngắn 1/2 thời gian học.</p>
+</div>
+<div class="row align-items-center g-5 mb-5">
+<div class="col-lg-6">
+<h3 class="fw-bold mb-4" style="font-size: 28px; color: var(--text-heading);">Học Tiếng Anh Bằng Tư Duy Toán Học</h3>
+<p class="text-body mb-4" style="font-size: 16px; line-height: 1.8;">Khác với phương pháp học nhồi nhét truyền thống, Linearthinking ứng dụng sự logic của toán học vào việc học ngoại ngữ. Hệ phương pháp bao gồm 2 yếu tố cốt lõi:</p>
+<ul class="roadmap-features mb-4">
+<li><i class="bi bi-check-circle-fill text-primary-dol me-3 fs-5"></i><div><strong>Sự Cụ thể hoá (Specification):</strong> Biến những thứ mơ hồ thành các công thức, mô hình rõ ràng.</div></li>
+<li><i class="bi bi-check-circle-fill text-primary-dol me-3 fs-5"></i><div><strong>Sự Đơn giản hoá (Simplification):</strong> Lọc bỏ rườm rà, tập trung vào bản chất cốt lõi của cấu trúc câu và đoạn văn.</div></li>
+</ul>
+<a class="btn-dol btn-outline-dol" href="#">Tìm hiểu chi tiết phương pháp</a>
+</div>
+<div class="col-lg-6">
+<div class="video-wrapper">
+<!-- YouTube video iframe -->
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" src="https://www.youtube.com/embed/kweCuKNnTXA" title="Linearthinking Introduction"></iframe>
+</div>
+</div>
+</div>
+<div class="row g-4 mt-2">
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<div class="feature-icon">🧠</div>
+<h3 class="feature-title">Phương pháp Linearthinking</h3>
+<p class="feature-desc">Hệ phương pháp tư duy độc quyền, thông minh, giúp rút ngắn 1/2 thời gian học.</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<div class="feature-icon">👩‍🏫</div>
+<h3 class="feature-title">Đội ngũ giáo viên tinh nhuệ</h3>
+<p class="feature-desc">100% giáo viên có bằng cấp chuyên môn, IELTS 8.0 - 8.5+, tận tâm và truyền cảm hứng.</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<div class="feature-icon">📱</div>
+<h3 class="feature-title">Hệ sinh thái công nghệ Super App</h3>
+<p class="feature-desc">Luyện tập mọi lúc mọi nơi với kho đề thi thật, được AI chấm chữa chi tiết từng lỗi sai.</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<div class="feature-icon">🏢</div>
+<h3 class="feature-title">Cơ sở vật chất hiện đại</h3>
+<p class="feature-desc">Không gian học tập truyền cảm hứng, trang thiết bị tối tân mang lại trải nghiệm tốt nhất.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Lộ trình khóa học tiêu biểu -->
+<section class="section-padding bg-gray-dol " id="lo-trinh" style="padding: 80px 0;">
+<div class="container">
+<div class="text-center mb-5">
+<h2 class="section-title-large">Lộ trình IELTS tinh gọn - Hiệu quả</h2>
+<p class="text-body fs-5">Cá nhân hóa lộ trình, tối ưu chi phí và thời gian học.</p>
+</div>
+<div class="row g-4">
+<!-- Course 1 -->
+<div class="col-lg-4 col-md-6">
+<div class="roadmap-card">
+<div class="roadmap-header bg-red-gradient">
+<h3 class="roadmap-level">IELTS Pre</h3>
+<div class="roadmap-target">Đầu ra 4.0 - 5.0</div>
+</div>
+<div class="roadmap-body">
+<div class="roadmap-time"><i class="bi bi-clock"></i> 8 Tuần</div>
+<ul class="roadmap-features">
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Lấy lại gốc từ vựng &amp; ngữ pháp</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Làm quen phương pháp Linearthinking</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Luyện phản xạ nghe nói cơ bản</li>
+</ul>
+</div>
+<div class="roadmap-footer">
+<a class="btn-dol btn-outline-dol w-100 text-center" href="/khoa-hoc">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Course 2 -->
+<div class="col-lg-4 col-md-6">
+<div class="roadmap-card popular-course">
+<div class="popular-badge">Được chọn nhiều nhất</div>
+<div class="roadmap-header bg-orange-gradient">
+<h3 class="roadmap-level">IELTS Intensive</h3>
+<div class="roadmap-target">Đầu ra 6.0 - 6.5</div>
+</div>
+<div class="roadmap-body">
+<div class="roadmap-time"><i class="bi bi-clock"></i> 10 Tuần</div>
+<ul class="roadmap-features">
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Áp dụng Linearthinking vào Đọc-Viết</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Chữa bài 1-1 với giáo viên</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Thực hành thi thử chuẩn format</li>
+</ul>
+</div>
+<div class="roadmap-footer">
+<a class="btn-dol btn-primary-dol w-100 text-center" href="/khoa-hoc">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Course 3 -->
+<div class="col-lg-4 col-md-6">
+<div class="roadmap-card">
+<div class="roadmap-header bg-blue-gradient">
+<h3 class="roadmap-level">IELTS Master</h3>
+<div class="roadmap-target">Đầu ra 7.0 - 8.0+</div>
+</div>
+<div class="roadmap-body">
+<div class="roadmap-time"><i class="bi bi-clock"></i> 12 Tuần</div>
+<ul class="roadmap-features">
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Hoàn thiện kỹ năng Writing &amp; Speaking nâng cao</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Chiến lược xử lý đề thi khó</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Tối đa hóa điểm số các kỹ năng thế mạnh</li>
+</ul>
+</div>
+<div class="roadmap-footer">
+<a class="btn-dol btn-outline-dol w-100 text-center" href="/khoa-hoc">Xem chi tiết</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 2 for new courses -->
+<div class="row g-4 mt-1">
+<!-- Course 4 -->
+<div class="col-lg-4 col-md-6">
+<div class="roadmap-card">
+<div class="roadmap-header" style="background: linear-gradient(135deg, #4ade80, #16a34a); color: white;">
+<h3 class="roadmap-level">IELTS Foundation</h3>
+<div class="roadmap-target">Dành cho người mất gốc</div>
+</div>
+<div class="roadmap-body">
+<div class="roadmap-time"><i class="bi bi-clock"></i> 8 Tuần</div>
+<ul class="roadmap-features">
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Làm quen với tiếng Anh học thuật</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Phát âm chuẩn IPA</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Xây dựng từ vựng nền tảng</li>
+</ul>
+</div>
+<div class="roadmap-footer">
+<a class="btn-dol btn-outline-dol w-100 text-center" href="/khoa-hoc">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Course 5 -->
+<div class="col-lg-4 col-md-6">
+<div class="roadmap-card">
+<div class="roadmap-header" style="background: linear-gradient(135deg, #a855f7, #7e22ce); color: white;">
+<h3 class="roadmap-level">IELTS S&amp;W Intensive</h3>
+<div class="roadmap-target">Speaking &amp; Writing</div>
+</div>
+<div class="roadmap-body">
+<div class="roadmap-time"><i class="bi bi-clock"></i> 6 Tuần</div>
+<ul class="roadmap-features">
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Tập trung 100% 2 kỹ năng Output</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Chữa bài chi tiết từng lỗi sai</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Mock test 1-1 với cựu giám khảo</li>
+</ul>
+</div>
+<div class="roadmap-footer">
+<a class="btn-dol btn-outline-dol w-100 text-center" href="/khoa-hoc">Xem chi tiết</a>
+</div>
+</div>
+</div>
+<!-- Course 6 -->
+<div class="col-lg-4 col-md-6">
+<div class="roadmap-card">
+<div class="roadmap-header" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;">
+<h3 class="roadmap-level">IELTS 1 Kèm 1</h3>
+<div class="roadmap-target">Lộ trình cá nhân hóa</div>
+</div>
+<div class="roadmap-body">
+<div class="roadmap-time"><i class="bi bi-clock"></i> Linh hoạt</div>
+<ul class="roadmap-features">
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Thiết kế lộ trình riêng biệt 100%</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Tối đa hóa điểm số trong thời gian ngắn</li>
+<li><i class="bi bi-check-circle-fill text-success me-2"></i>Được hướng dẫn bởi Giám đốc học thuật</li>
+</ul>
+</div>
+<div class="roadmap-footer">
+<a class="btn-dol btn-outline-dol w-100 text-center" href="/khoa-hoc">Xem chi tiết</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Intensive Track Banner -->
+<div class="mt-5 p-5 rounded-4 position-relative " style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #fecaca;">
+<div class="row align-items-center position-relative z-1">
+<div class="col-lg-8">
+<div class="d-inline-flex align-items-center mb-3 px-3 py-2 bg-white rounded-pill" style="color: var(--primary-color); font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+<i class="bi bi-lightning-charge-fill me-2"></i> Kịp Deadline - Thi Sớm
+                    </div>
+<h3 class="fw-800 text-heading mb-3" style="font-size: 28px;">Gói Học Tăng Cường (Intensive Track)</h3>
+<p class="text-body fs-5 mb-0">Rút ngắn <strong class="text-primary-dol">1/2 thời gian</strong> với lịch học cường độ cao (5-6 buổi/tuần). Phù hợp học viên cần bằng gấp để xét tốt nghiệp, du học. Có cố vấn học tập theo sát 24/7.</p>
+</div>
+<div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+<a class="btn-dol btn-primary-dol px-4 py-3" href="/lien-he" style="font-size: 16px;">Đăng ký Gói Tăng Cường</a>
+</div>
+</div>
+<!-- Decorative circle -->
+<div style="position: absolute; width: 300px; height: 300px; background: rgba(239, 68, 68, 0.05); border-radius: 50%; right: -50px; top: -100px; z-index: 0;"></div>
+</div>
+</div>
+</section>
+<!-- 5. Giáo viên nổi bật -->
+<section class="section-padding bg-white  " id="giao-vien">
+<div class="container">
+<div class="d-flex justify-content-between align-items-end mb-4">
+<div>
+<h2 class="section-title text-start mb-2" data-aos="fade-up">Đội ngũ giáo viên ngôi sao</h2>
+<div class="d-flex align-items-center gap-3">
+<div class="d-inline-flex align-items-center px-3 py-1" style="background: #FFF0F0; border-radius: 20px; color: var(--primary-color); font-weight: 600; font-size: 14px;">
+<i class="bi bi-heart-fill me-2"></i> Được học viên yêu thích
+                    </div>
+<p class="text-body mb-0 fs-6 d-none d-md-block">Là những giáo viên giỏi kiến thức và giỏi truyền đạt, truyền cảm hứng.</p>
+</div>
+</div>
+<div class="d-flex gap-2">
+<button class="btn-dol btn-outline-dol swiper-prev" style="padding: 8px 16px;"><i class="bi bi-arrow-left"></i></button>
+<button class="btn-dol btn-outline-dol swiper-next" style="padding: 8px 16px;"><i class="bi bi-arrow-right"></i></button>
+</div>
+</div>
+<div class="swiper teacherSwiper pb-5 pt-4">
+<div class="swiper-wrapper" id="teacherSliderWrapper">
+<!-- Data will be injected here by JS -->
+</div>
+</div>
+<div class="text-center mt-2">
+<a class="btn-dol btn-primary-dol px-4" href="/giao-vien">Xem tất cả giáo viên</a>
+</div>
+</div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Render Teachers Slider
+            const sliderWrapper = document.getElementById('teacherSliderWrapper');
+            if (sliderWrapper && typeof dolTeachers !== 'undefined') {
+                let html = '';
+                dolTeachers.forEach(teacher => {
+                    html += `
+                        <div class="swiper-slide">
+                            <div class="teacher-slider-card">
+                                <div class="teacher-image-box" style="background-color: ${teacher.bgColor};">
+                                    <img src="${teacher.avatar}" alt="${teacher.name}" class="t-img" />
+                                    <div class="score-overlay">${teacher.ielts_overall} IELTS Overall</div>
+                                </div>
+                                <div class="teacher-slider-info text-center mt-3">
+                                    <h4 class="fw-800 text-heading mb-1" style="font-size: 18px;">${teacher.name}</h4>
+                                    <p class="text-muted mb-0" style="font-size: 13px;">${teacher.title}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                sliderWrapper.innerHTML = html;
+
+                // Init Swiper
+                new Swiper('.teacherSwiper', {
+                    slidesPerView: 1.5,
+                    spaceBetween: 20,
+                    loop: true,
+                    centeredSlides: false,
+                    navigation: {
+                        nextEl: '.swiper-next',
+                        prevEl: '.swiper-prev',
+                    },
+                    breakpoints: {
+                        576: { slidesPerView: 2.5, spaceBetween: 20 },
+                        768: { slidesPerView: 3.5, spaceBetween: 24 },
+                        1024: { slidesPerView: 4.5, spaceBetween: 24 }
+                    }
+                });
+            }
+
+            // (Other animations from site.js are still active)
+        });
+    </script>
+}
+
+<!-- 6. Số liệu -->
+<section class="stats-section ">
+<div class="container">
+<div class="row g-4">
+<div class="col-md-3 col-6">
+<div class="stat-item">
+<div class="stat-number">10K+</div>
+<div class="stat-label">Học viên đạt mục tiêu</div>
+</div>
+</div>
+<div class="col-md-3 col-6">
+<div class="stat-item">
+<div class="stat-number">100+</div>
+<div class="stat-label">Giáo viên 8.0+ IELTS</div>
+</div>
+</div>
+<div class="col-md-3 col-6">
+<div class="stat-item">
+<div class="stat-number">95%</div>
+<div class="stat-label">Tỷ lệ hài lòng</div>
+</div>
+</div>
+<div class="col-md-3 col-6">
+<div class="stat-item">
+<div class="stat-number">15+</div>
+<div class="stat-label">Cơ sở toàn quốc</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Media Logos -->
+<section class="section-padding bg-gray-dol " id="bao-chi" style="padding: 80px 0;">
+<div class="container text-center">
+<h2 class="section-title-large mb-5">Báo chí nói gì về DOL?</h2>
+<div class="media-logos">
+<div class="media-logo" data-aos="fade-up" data-aos-delay="0"><img alt="VnExpress" src="https://placehold.co/150x50/FFFFFF/5A6877?text=VnExpress"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="50"><img alt="Tuoi Tre" src="https://placehold.co/150x50/FFFFFF/5A6877?text=Tuoi+Tre"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="100"><img alt="Thanh Nien" src="https://placehold.co/150x50/FFFFFF/5A6877?text=Thanh+Nien"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="150"><img alt="Dan Tri" src="https://placehold.co/150x50/FFFFFF/5A6877?text=Dan+Tri"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="0"><img alt="Zing News" src="https://placehold.co/150x50/FFFFFF/5A6877?text=Zing+News"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="50"><img alt="VietNamNet" src="https://placehold.co/150x50/FFFFFF/5A6877?text=VietNamNet"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="100"><img alt="VTV News" src="https://placehold.co/150x50/FFFFFF/5A6877?text=VTV+News"/></div>
+<div class="media-logo" data-aos="fade-up" data-aos-delay="150"><img alt="Kenh 14" src="https://placehold.co/150x50/FFFFFF/5A6877?text=Kenh+14"/></div>
+</div>
+</div>
+</section>
+<!-- 7. Review & Hall of Fame -->
+<section class="section-padding bg-white " id="hoc-vien" style="padding: 80px 0;">
+<div class="container">
+<!-- Bảng Vàng Học Viên -->
+<div class="text-center mb-5">
+<h2 class="section-title mb-2" data-aos="fade-up">Bảng Vàng Học Viên Ưu Tú</h2>
+<p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Hàng ngàn học viên đã bứt phá điểm số ấn tượng cùng phương pháp Linearthinking</p>
+</div>
+<div class="hof-grid">
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754613_2065387549758146619_13551008470814114_724087f73396107bcc14e8ef670533bc.jpg"/>
+<div class="hof-score">8.5 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Lê Minh</div>
+<p class="hof-desc">THPT Chuyên Lê Hồng Phong</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754630_2065387549758146619_13551008470814114_643164bbd0f1d63e35c859d2fb2e0e5e.jpg"/>
+<div class="hof-score">8.5 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Nguyễn Trọng</div>
+<p class="hof-desc">Học sinh lớp 12</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754643_2065387549758146619_13551008470814114_dac14a7fbc37d6510a0d72cbd9827ea5.jpg"/>
+<div class="hof-score">7.5 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Phương Nam</div>
+<p class="hof-desc">Sinh viên ĐH KHTN</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754654_2065387549758146619_13551008470814114_2e5456bfd81201ea46a75cc208957d9c.jpg"/>
+<div class="hof-score">7.5 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Khánh Thiện</div>
+<p class="hof-desc">Học sinh xuất sắc</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754663_2065387549758146619_13551008470814114_ba7097924c37fcff799013c0dd2b9695.jpg"/>
+<div class="hof-score">8.0 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Văn Thịnh</div>
+<p class="hof-desc">Học viên tiêu biểu</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754672_2065387549758146619_13551008470814114_48ac4dc79b46456808d7e21d3a6a4df9.jpg"/>
+<div class="hof-score">8.0 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Hoàng Phúc</div>
+<p class="hof-desc">Tăng 2.0 Band sau 3 tháng</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754694_2065387549758146619_13551008470814114_a06e0d4957e3ec532ebb3d86b46e4e0b.jpg"/>
+<div class="hof-score">5.5+ IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Hiển Long</div>
+<p class="hof-desc">Lớp 12 Đào Sơn Tây</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754722_2065387549758146619_13551008470814114_0a65938dc9ce4086e9207cd83104178b.jpg"/>
+<div class="hof-score">6.0 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Vũ Minh Tuấn</div>
+<p class="hof-desc">Sinh viên năm 1 ĐH FPT</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754731_2065387549758146619_13551008470814114_023f34b1627917dfd05342bbcbf3b15e.jpg"/>
+<div class="hof-score">8.0 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Trịnh Hoàng Anh Khoa</div>
+<p class="hof-desc">Sinh viên năm 3 Bách Khoa</p>
+</div>
+</div>
+<div class="hof-card">
+<div class="hof-img-wrapper">
+<img alt="Học viên" class="hof-img" src="/images/students/1790926754740_2065387549758146619_13551008470814114_0cd084537ea4b3e1c9ecf245ebd44d01.jpg"/>
+<div class="hof-score">8.5 IELTS</div>
+</div>
+<div class="hof-info">
+<div class="hof-name">Hoàng Hân</div>
+<p class="hof-desc">Đạt học bổng du học</p>
+</div>
+</div>
+</div>
+<!-- Cảm Nhận Học Viên -->
+<h2 class="section-title mb-5 mt-5 pt-5 border-top" data-aos="fade-up">Học viên nói gì về DOL?</h2>
+<div class="row g-4">
+<div class="col-md-4">
+<div class="testimonial-card">
+<div class="d-flex align-items-center mb-4">
+<div class="me-3" style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">T</div>
+<div>
+<h5 class="fw-bold mb-0">Nguyễn Thanh Tùng</h5>
+<div style="color: #FFB300;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+</div>
+</div>
+<p class="text-body fst-italic">"Chỉ sau 2 tháng học phương pháp tư duy, điểm Reading của mình tăng từ 5.5 lên 7.5. Không còn phải dịch từng chữ nữa."</p>
+<div class="mt-3 pt-3 border-top fw-bold text-primary-dol">Tăng: 5.5 → 7.0 Overall</div>
+</div>
+</div>
+<!-- Duplicate for visual balance -->
+<div class="col-md-4">
+<div class="testimonial-card">
+<div class="d-flex align-items-center mb-4">
+<div class="me-3" style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">H</div>
+<div>
+<h5 class="fw-bold mb-0">Trần Thị Thu Hà</h5>
+<div style="color: #FFB300;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+</div>
+</div>
+<p class="text-body fst-italic">"Môi trường học tập cực kỳ chuyên nghiệp, giáo viên hỗ trợ 24/7. App luyện tập rất thông minh."</p>
+<div class="mt-3 pt-3 border-top fw-bold text-primary-dol">Tăng: 6.0 → 7.5 Overall</div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="testimonial-card">
+<div class="d-flex align-items-center mb-4">
+<div class="me-3" style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">P</div>
+<div>
+<h5 class="fw-bold mb-0">Lê Hoàng Phong</h5>
+<div style="color: #FFB300;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+</div>
+</div>
+<p class="text-body fst-italic">"Phương pháp tư duy đúng là 'chân ái'. Lần đầu tiên mình thấy việc lập dàn ý Writing lại dễ dàng đến thế."</p>
+<div class="mt-3 pt-3 border-top fw-bold text-primary-dol">Tăng: 5.0 → 6.5 Overall</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. CTA -->
+<section class="section-padding bg-gray-dol ">
+<div class="container text-center">
+<h2 class="section-title" data-aos="fade-up">Bạn đã sẵn sàng chinh phục IELTS?</h2>
+<p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Đăng ký kiểm tra trình độ và nhận tư vấn lộ trình học miễn phí ngay hôm nay.</p>
+<a class="btn-dol btn-primary-dol px-5 py-3 fs-5" href="/lien-he">Đăng Ký Tư Vấn</a>
+</div>
+</section>

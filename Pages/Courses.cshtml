@@ -1,0 +1,105 @@
+@page "/khoa-hoc"
+@{
+    ViewData["Title"] = "Khóa học IELTS";
+}
+
+<style>
+    .page-hero {
+        background-color: var(--bg-gray);
+        padding: 60px 0;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+</style>
+
+<div class="page-hero fade-in">
+    <div class="container">
+        <h1 class="section-title mb-3">Lộ Trình Các Khóa Học IELTS</h1>
+        <p class="section-subtitle">Chương trình cá nhân hóa, tối ưu chi phí và thời gian dựa trên nền tảng tư duy.</p>
+    </div>
+</div>
+
+<div class="container py-5 fade-in">
+    <div class="row g-4 justify-content-center">
+        <!-- Foundation -->
+        <div class="col-lg-4 col-md-6">
+            <div class="dol-card p-0 d-flex flex-column h-100 border-0" style="box-shadow: var(--shadow-md);">
+                <div class="p-4" style="background: #FFF0F0; border-radius: var(--border-radius) var(--border-radius) 0 0;">
+                    <h3 class="fw-800 text-primary-dol mb-0">IELTS Foundation</h3>
+                    <p class="mb-0 text-muted mt-2 fw-600">Đầu vào 0 - 3.0</p>
+                </div>
+                <div class="p-4 flex-grow-1 d-flex flex-column">
+                    <div class="d-flex justify-content-between mb-4 pb-3 border-bottom">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-700">Mục tiêu</div>
+                            <div class="fs-4 fw-800 text-primary-dol">4.0+</div>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4 flex-grow-1" style="color: var(--text-body);">
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1"></i> Xây dựng nền tảng ngữ pháp</li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1"></i> Phát âm chuẩn IPA</li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1"></i> Từ vựng chủ đề quen thuộc</li>
+                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill text-primary-dol me-3 mt-1"></i> Làm quen 4 kỹ năng IELTS</li>
+                    </ul>
+                    
+                    <a href="/lien-he" class="btn-dol btn-primary-dol w-100">Đăng ký tư vấn</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Standard -->
+        <div class="col-lg-4 col-md-6">
+            <div class="dol-card p-0 d-flex flex-column h-100 border-0" style="box-shadow: var(--shadow-md);">
+                <div class="p-4" style="background: #E8F5E9; border-radius: var(--border-radius) var(--border-radius) 0 0;">
+                    <h3 class="fw-800 mb-0" style="color: #2E7D32;">IELTS Standard</h3>
+                    <p class="mb-0 text-muted mt-2 fw-600">Đầu vào 4.0 - 5.0</p>
+                </div>
+                <div class="p-4 flex-grow-1 d-flex flex-column">
+                    <div class="d-flex justify-content-between mb-4 pb-3 border-bottom">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-700">Mục tiêu</div>
+                            <div class="fs-4 fw-800" style="color: #2E7D32;">5.5 - 6.0+</div>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4 flex-grow-1" style="color: var(--text-body);">
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #2E7D32;"></i> Tiếp cận phương pháp Tư Duy</li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #2E7D32;"></i> Kỹ năng đọc hiểu ý chính</li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #2E7D32;"></i> Cấu trúc bài viết Task 1 & 2</li>
+                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #2E7D32;"></i> Luyện nói trôi chảy</li>
+                    </ul>
+                    
+                    <a href="/lien-he" class="btn-dol w-100 text-white" style="background-color: #2E7D32;">Đăng ký tư vấn</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intensive -->
+        <div class="col-lg-4 col-md-6">
+            <div class="dol-card p-0 d-flex flex-column h-100 border-0" style="box-shadow: var(--shadow-md);">
+                <div class="p-4" style="background: #E3F2FD; border-radius: var(--border-radius) var(--border-radius) 0 0;">
+                    <h3 class="fw-800 mb-0" style="color: #1565C0;">IELTS Intensive</h3>
+                    <p class="mb-0 text-muted mt-2 fw-600">Đầu vào 6.0+</p>
+                </div>
+                <div class="p-4 flex-grow-1 d-flex flex-column">
+                    <div class="d-flex justify-content-between mb-4 pb-3 border-bottom">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-700">Mục tiêu</div>
+                            <div class="fs-4 fw-800" style="color: #1565C0;">7.0 - 8.0+</div>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4 flex-grow-1" style="color: var(--text-body);">
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #1565C0;"></i> Hoàn thiện phương pháp Tư Duy</li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #1565C0;"></i> Xử lý dạng câu hỏi khó</li>
+                        <li class="mb-3 d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #1565C0;"></i> Phát triển ý tưởng Writing Task 2</li>
+                        <li class="d-flex align-items-start"><i class="bi bi-check-circle-fill me-3 mt-1" style="color: #1565C0;"></i> Luyện đề thực tế</li>
+                    </ul>
+                    
+                    <a href="/lien-he" class="btn-dol w-100 text-white" style="background-color: #1565C0;">Đăng ký tư vấn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

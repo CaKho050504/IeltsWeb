@@ -1,0 +1,77 @@
+/* Responsive layout specifically for DOL style */
+
+/* Tablet & Mobile Nav */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-heading);
+    cursor: pointer;
+}
+
+@media (max-width: 991px) {
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+        gap: 16px;
+    }
+
+    .nav-menu.show {
+        display: flex;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .header-cta {
+        display: none;
+    }
+}
+
+/* Sections & Typography */
+@media (max-width: 768px) {
+    .section-padding {
+        padding: 40px 0;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .hero-title {
+        font-size: 2.25rem !important;
+    }
+    
+    .dol-card {
+        padding: 24px;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-buttons .btn-dol {
+        width: 100%;
+    }
+}
+
+/* Utilities */
+.w-100-mobile {
+    width: auto;
+}
+
+@media (max-width: 576px) {
+    .w-100-mobile {
+        width: 100% !important;
+    }
+}
